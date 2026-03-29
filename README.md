@@ -1,7 +1,7 @@
 # Project-Work-WD
-Project Description
 
-Project Title: Rental Housing Platform (Airbnb-style)
+# Project Title
+Rental Housing Platform (Airbnb-style)
 
 # Description
 A platform for renting apartments and houses. Users can list properties, book rentals, and leave reviews.
