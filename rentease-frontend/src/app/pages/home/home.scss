@@ -1,0 +1,235 @@
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #f7f7f7;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+  }
+  
+  // NAVBAR
+  .navbar {
+    background: white;
+    border-bottom: 1px solid #ddd;
+    padding: 0 40px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  
+    .logo {
+      font-size: 20px;
+      font-weight: 700;
+      color: #FF385C;
+      text-decoration: none;
+    }
+  
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+  
+      a {
+        text-decoration: none;
+        color: #222;
+        font-size: 14px;
+        font-weight: 500;
+  
+        &:hover { color: #FF385C; }
+      }
+    }
+  }
+  
+  .btn-nav {
+    background: #FF385C;
+    color: white !important;
+    padding: 8px 20px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+  
+    &:hover { background: #e0314f; }
+  }
+  
+  // HERO
+  .hero {
+    background: linear-gradient(135deg, #FF385C, #ff6b35);
+    color: white;
+    text-align: center;
+    padding: 80px 24px;
+  
+    h1 {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+  
+    p {
+      font-size: 18px;
+      opacity: 0.9;
+      margin-bottom: 32px;
+    }
+  }
+  
+  .btn-hero {
+    background: white;
+    color: #FF385C;
+    padding: 14px 32px;
+    border-radius: 32px;
+    font-weight: 700;
+    font-size: 15px;
+    text-decoration: none;
+    display: inline-block;
+  
+    &:hover { opacity: 0.9; }
+  }
+  
+  // MAIN
+  .main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px;
+    width: 100%;
+  }
+  
+  .section-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 28px;
+  }
+  
+  // GRID
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+    margin-bottom: 40px;
+  }
+  
+  // CARD
+  .card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.2s, box-shadow 0.2s;
+  
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+  
+    img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+  
+    .card-body {
+      padding: 16px;
+    }
+  
+    .card-city {
+      font-size: 12px;
+      color: #717171;
+      font-weight: 500;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  
+    h3 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #222;
+      margin-bottom: 12px;
+    }
+  
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #eee;
+      padding-top: 12px;
+    }
+  
+    .price {
+      font-size: 17px;
+      font-weight: 700;
+      color: #222;
+  
+      span {
+        font-size: 13px;
+        font-weight: 400;
+        color: #717171;
+      }
+    }
+  
+    .cta {
+      font-size: 13px;
+      font-weight: 600;
+      color: #FF385C;
+    }
+  }
+  
+  // STATES
+  .state {
+    text-align: center;
+    padding: 60px;
+    color: #717171;
+  
+    &.error { color: #e53935; }
+  }
+  
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #ddd;
+    border-top-color: #FF385C;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  
+  // BUTTONS
+  .center { text-align: center; }
+  
+  .btn-more {
+    display: inline-block;
+    padding: 13px 32px;
+    border: 2px solid #FF385C;
+    color: #FF385C;
+    border-radius: 32px;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+  
+    &:hover {
+      background: #FF385C;
+      color: white;
+    }
+  }
+  
+  // FOOTER
+  .footer {
+    background: white;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    padding: 24px;
+    font-size: 13px;
+    color: #717171;
+    margin-top: auto;
+  }

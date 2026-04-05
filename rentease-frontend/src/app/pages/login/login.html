@@ -1,1 +1,89 @@
-<p>login works!</p>
+<div class="login-wrapper">
+    <div class="login-card">
+  
+      <h1 class="logo">🏠 RentEase</h1>
+  
+      <h2>{{ isLoginMode ? 'Войти' : 'Регистрация' }}</h2>
+  
+      <form *ngIf="isLoginMode" (ngSubmit)="onLogin()">
+        <div class="field">
+          <label>Имя пользователя</label>
+          <input
+            type="text"
+            [(ngModel)]="credentials.username"
+            name="username"
+            placeholder="Введите username"
+            required
+          />
+        </div>
+  
+        <div class="field">
+          <label>Пароль</label>
+          <input
+            type="password"
+            [(ngModel)]="credentials.password"
+            name="password"
+            placeholder="Введите пароль"
+            required
+          />
+        </div>
+  
+        <div class="error" *ngIf="errorMsg">{{ errorMsg }}</div>
+  
+        <button type="submit" class="btn-primary" [disabled]="isLoading">
+          <span *ngIf="isLoading">Загрузка...</span>
+          <span *ngIf="!isLoading">Войти</span>
+        </button>
+      </form>
+  
+      <form *ngIf="!isLoginMode" (ngSubmit)="onRegister()">
+        <div class="field">
+          <label>Имя пользователя</label>
+          <input
+            type="text"
+            [(ngModel)]="registerData.username"
+            name="username"
+            placeholder="Придумайте username"
+            required
+          />
+        </div>
+  
+        <div class="field">
+          <label>Email</label>
+          <input
+            type="email"
+            [(ngModel)]="registerData.email"
+            name="email"
+            placeholder="Введите email"
+            required
+          />
+        </div>
+  
+        <div class="field">
+          <label>Пароль</label>
+          <input
+            type="password"
+            [(ngModel)]="registerData.password"
+            name="password"
+            placeholder="Придумайте пароль"
+            required
+          />
+        </div>
+  
+        <div class="error" *ngIf="errorMsg">{{ errorMsg }}</div>
+  
+        <button type="submit" class="btn-primary" [disabled]="isLoading">
+          <span *ngIf="isLoading">Загрузка...</span>
+          <span *ngIf="!isLoading">Зарегистрироваться</span>
+        </button>
+      </form>
+  
+      <p class="toggle-text">
+        {{ isLoginMode ? 'Нет аккаунта?' : 'Уже есть аккаунт?' }}
+        <a (click)="toggleMode()">
+          {{ isLoginMode ? 'Зарегистрироваться' : 'Войти' }}
+        </a>
+      </p>
+  
+    </div>
+  </div>
