@@ -13,16 +13,16 @@
 
 ---
 
-## 🔴 Саша — Backend Lead
+## 🔴 Саша — Backend
 
 ### Фаза 1: Инициализация проекта (День 1–2)
-- [ ] Создать GitHub репо, добавить всех в коллаборы
-- [ ] Инициализировать Django проект: `django-admin startproject rentease`
-- [ ] Создать приложение: `python manage.py startapp api`
-- [ ] Настроить `settings.py`: `INSTALLED_APPS`, `DATABASES`, `REST_FRAMEWORK`
-- [ ] Настроить `django-cors-headers` (добавить в MIDDLEWARE, `CORS_ALLOWED_ORIGINS`)
-- [ ] Добавить `.gitignore`, `requirements.txt`, начальный `README.md`
-- [ ] Первый push в `main`, дать ссылку преподавателю
+- [+] Создать GitHub репо, добавить всех в коллаборы
+- [+] Инициализировать Django проект: `django-admin startproject rentease`
+- [+] Создать приложение: `python manage.py startapp api`
+- [+] Настроить `settings.py`: `INSTALLED_APPS`, `DATABASES`, `REST_FRAMEWORK`
+- [+] Настроить `django-cors-headers` (добавить в MIDDLEWARE, `CORS_ALLOWED_ORIGINS`)
+- [+] Добавить `.gitignore`, `requirements.txt`, начальный `README.md`
+- [+] Первый push в `main`, дать ссылку преподавателю
 
 ### Фаза 2: Models — User & Property (День 2–3)
 - [ ] Модель **`Property`**
@@ -304,7 +304,7 @@
 | @for / @if | Камила | ⬜ |
 | Error handling | Камила | ⬜ |
 | README.md | Саша | ⬜ |
-| Postman в репо | Денис | ⬜ |
+| Postman в репо | Саша | ⬜ |
 | 4 слайда PDF | Денис | ⬜ |
 
 ---
