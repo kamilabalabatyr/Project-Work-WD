@@ -25,7 +25,7 @@
 - [+] Первый push в `main`, дать ссылку преподавателю
 
 ### Фаза 2: Models — User & Property (День 2–3)
-- [ ] Модель **`Property`**
+- [+] Модель **`Property`**
   ```python
   class Property(models.Model):
       owner = models.ForeignKey(User, on_delete=models.CASCADE)  # FK #1
@@ -36,8 +36,8 @@
       max_guests = models.IntegerField()
       created_at = models.DateTimeField(auto_now_add=True)
   ```
-- [ ] Запустить `makemigrations` и `migrate`
-- [ ] Зарегистрировать модели в `admin.py`
+- [+] Запустить `makemigrations` и `migrate`
+- [+] Зарегистрировать модели в `admin.py`
 
 ### Фаза 3: Auth (FBV) (День 3–4)
 - [ ] Настроить `rest_framework.authtoken` в `INSTALLED_APPS`
