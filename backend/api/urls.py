@@ -1,0 +1,13 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    # Auth (FBV)
+    path('auth/register/', views.register_view, name='register'),
+    path('auth/login/', views.login_view, name='login'),
+    path('auth/logout/', views.logout_view, name='logout'),
+
+    # Properties (CBV)
+    path('properties/', views.PropertyListCreateView.as_view(), name='property-list'),
+    path('properties/<int:pk>/', views.PropertyDetailView.as_view(), name='property-detail'),
+]
