@@ -52,18 +52,18 @@
 - [+] Добавить URL-маршруты: `/api/auth/register/`, `/api/auth/login/`, `/api/auth/logout/`
 
 ### Фаза 4: Property CRUD (CBV) (День 4–5)
-- [ ] **`PropertyListCreateView`** (CBV #1) — `ListCreateAPIView`
+- [+] **`PropertyListCreateView`** (CBV #1) — `ListCreateAPIView`
   - GET: список всех объектов (публично)
   - POST: создать объект (только авторизованный), автоматически `owner = request.user`
 - [ ] **`PropertyDetailView`** (CBV #2) — `RetrieveUpdateDestroyAPIView`
   - GET: детали объекта
   - PUT/PATCH: только владелец
   - DELETE: только владелец
-- [ ] Добавить пермишены (`IsAuthenticatedOrReadOnly`, кастомный `IsOwnerOrReadOnly`)
-- [ ] URL-маршруты: `/api/properties/`, `/api/properties/<pk>/`
+- [+] Добавить пермишены (`IsAuthenticatedOrReadOnly`, кастомный `IsOwnerOrReadOnly`)
+- [+] URL-маршруты: `/api/properties/`, `/api/properties/<pk>/`
 
 ### Фаза 5: Serializers для своих моделей (День 5)
-- [ ] **`PropertyModelSerializer`** (ModelSerializer #1)
+- [+] **`PropertyModelSerializer`** (ModelSerializer #1)
   - Поля: `id`, `title`, `description`, `city`, `price_per_night`, `max_guests`, `owner`, `created_at`
   - `owner` — read_only
 - [+] **`RegisterSerializer`** (Serializer #1)
@@ -72,10 +72,10 @@
 - [+] Подключить сериализаторы к вьюхам
 
 ### Фаза 6: Финальная проверка и деплой (День 6–7)
-- [ ] Проверить все эндпоинты Property через Postman
-- [ ] Проверить CORS с фронтендом
-- [ ] Ревью кода Дениса (сделать merge review)
-- [ ] Финальный `requirements.txt`: `pip freeze > requirements.txt`
+- [+] Проверить все эндпоинты Property через Postman
+- [+] Проверить CORS с фронтендом
+- [+] Ревью кода Дениса (сделать merge review)
+- [+] Финальный `requirements.txt`: `pip freeze > requirements.txt`
 
 ---
 
