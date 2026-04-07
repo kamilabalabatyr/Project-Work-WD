@@ -40,16 +40,16 @@
 - [+] Зарегистрировать модели в `admin.py`
 
 ### Фаза 3: Auth (FBV) (День 3–4)
-- [ ] Настроить `rest_framework.authtoken` в `INSTALLED_APPS`
-- [ ] `python manage.py migrate` для таблицы токенов
-- [ ] **`register_view`** (FBV #1) — создать пользователя, вернуть токен
+- [+] Настроить `rest_framework.authtoken` в `INSTALLED_APPS`
+- [+] `python manage.py migrate` для таблицы токенов
+- [+] **`register_view`** (FBV #1) — создать пользователя, вернуть токен
   ```python
   @api_view(['POST'])
   def register_view(request): ...
   ```
-- [ ] **`login_view`** (FBV #2) — проверить credentials, вернуть токен
-- [ ] **`logout_view`** — удалить токен из БД
-- [ ] Добавить URL-маршруты: `/api/auth/register/`, `/api/auth/login/`, `/api/auth/logout/`
+- [+] **`login_view`** (FBV #2) — проверить credentials, вернуть токен
+- [+] **`logout_view`** — удалить токен из БД
+- [+] Добавить URL-маршруты: `/api/auth/register/`, `/api/auth/login/`, `/api/auth/logout/`
 
 ### Фаза 4: Property CRUD (CBV) (День 4–5)
 - [ ] **`PropertyListCreateView`** (CBV #1) — `ListCreateAPIView`
@@ -66,10 +66,10 @@
 - [ ] **`PropertyModelSerializer`** (ModelSerializer #1)
   - Поля: `id`, `title`, `description`, `city`, `price_per_night`, `max_guests`, `owner`, `created_at`
   - `owner` — read_only
-- [ ] **`RegisterSerializer`** (Serializer #1)
+- [+] **`RegisterSerializer`** (Serializer #1)
   - Поля: `username`, `email`, `password`, `password2`
   - Валидация: совпадение паролей
-- [ ] Подключить сериализаторы к вьюхам
+- [+] Подключить сериализаторы к вьюхам
 
 ### Фаза 6: Финальная проверка и деплой (День 6–7)
 - [ ] Проверить все эндпоинты Property через Postman
