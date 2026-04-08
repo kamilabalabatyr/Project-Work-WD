@@ -151,7 +151,7 @@
 
 ## 🔵 Камила — Frontend Dev
 
-### Фаза 1: Инициализация Angular проекта (День 1–2)
+### Фаза 1: Инициализация Angular проекта (День 1–2) ✅
 - [ ] `ng new rentease-frontend --routing --style=scss`
 - [ ] Push в тот же репо в папку `frontend/`
 - [ ] Установить зависимости: `@angular/forms`, `@angular/common/http`
@@ -170,7 +170,7 @@
   └── guards/
   ```
 
-### Фаза 2: Интерфейсы и Сервисы (День 2–3)
+### Фаза 2: Интерфейсы и Сервисы (День 2–3)✅
 - [ ] **Интерфейсы** (`interfaces/`)
   ```typescript
   interface IProperty { id, title, description, city, price_per_night, max_guests, owner }
@@ -191,7 +191,7 @@
   - `create(data): Observable<IBooking>` → POST `/api/bookings/`
   - `getMyBookings(): Observable<IBooking[]>` → GET `/api/bookings/`
 
-### Фаза 3: JWT Interceptor + Guard (День 3)
+### Фаза 3: JWT Interceptor + Guard (День 3)✅
 - [ ] **`AuthInterceptor`** (`interceptors/auth.interceptor.ts`)
   ```typescript
   // Добавляет к каждому запросу:
@@ -208,14 +208,14 @@
 
 ### Фаза 4: Страницы (День 3–5)
 
-#### 🏠 Home (`/`)
+#### 🏠 Home (`/`)✅
 - [ ] Список последних 6 объектов через `PropertyService.getAll()`
 - [ ] Карточка объекта: фото-placeholder, название, город, цена за ночь
 - [ ] `@for` для рендера карточек
 - [ ] Кнопка "Подробнее" → роутинг на `/properties/:id`
 - [ ] Кнопка "Войти" / "Выйти" в шапке (через `AuthService.isLoggedIn()`)
 
-#### 📋 Properties (`/properties`)
+#### 📋 Properties (`/properties`)✅
 - [ ] Полный список объектов
 - [ ] **Форма фильтра** (API Event #1 — запрос при изменении):
   - `[(ngModel)]="filterCity"` — поле города (Input #1)
@@ -228,7 +228,7 @@
   - Input #5: `[(ngModel)]="newProperty.city"`
   - Кнопка Submit → `PropertyService.create()` (API Event #2)
 
-#### 🏡 Property Detail (`/properties/:id`)
+#### 🏡 Property Detail (`/properties/:id`)✅
 - [ ] Загрузить объект по `:id` через `PropertyService.getById()` в `ngOnInit` (API Event #3)
 - [ ] Показать все детали: название, описание, город, цена, макс. гостей
 - [ ] **Форма бронирования** (только авторизованным):
@@ -239,7 +239,7 @@
 - [ ] Обработка ошибок: `@if (errorMsg)` → показать сообщение
 - [ ] Кнопка "Удалить" (только для владельца) → `PropertyService.delete()` (API Event #5)
 
-#### 🔐 Login (`/login`)
+#### 🔐 Login (`/login`)✅
 - [ ] Форма входа:
   - `[(ngModel)]="credentials.username"` (Input #9)
   - `[(ngModel)]="credentials.password"` (Input #10)
