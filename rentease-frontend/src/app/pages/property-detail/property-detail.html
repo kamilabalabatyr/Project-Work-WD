@@ -1,1 +1,130 @@
-<p>property-detail works!</p>
+<div class="page-wrapper">
+
+    <header class="navbar">
+      <a class="logo" routerLink="/">🏠 RentEase</a>
+      <nav>
+        <a routerLink="/properties">Все объекты</a>
+        @if (isLoggedIn()) {
+          <a routerLink="/my-bookings">Мои брони</a>
+        }
+        @if (!isLoggedIn()) {
+          <a routerLink="/login" class="btn-nav">Войти</a>
+        }
+      </nav>
+    </header>
+  
+    <main class="main">
+  
+      @if (isLoading) {
+        <div class="state">
+          <div class="spinner"></div>
+          <p>Загружаем...</p>
+        </div>
+      }
+  
+      @if (!isLoading && errorMsg && !property) {
+        <div class="state error">
+          <p>{{ errorMsg }}</p>
+          <a routerLink="/properties" class="btn-back">← Назад к списку</a>
+        </div>
+      }
+  
+      @if (!isLoading && property) {
+        <a routerLink="/properties" class="btn-back">← Назад к списку</a>
+  
+        <div class="detail-layout">
+  
+          <div class="detail-info">
+            <img [src]="getImage()" [alt]="property.title" class="detail-img" />
+  
+            <div class="detail-body">
+              <div class="detail-city">📍 {{ property.city }}</div>
+              <h1>{{ property.title }}</h1>
+              <p class="detail-desc">{{ property.description }}</p>
+  
+              <div class="detail-meta">
+                <div class="meta-item">
+                  <span class="meta-label">Цена за ночь</span>
+                  <span class="meta-value">${{ property.price_per_night }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-label">Макс. гостей</span>
+                  <span class="meta-value">{{ property.max_guests }}</span>
+                </div>
+              </div>
+  
+              <!-- DELETE -->
+              @if (isOwner()) {
+                <button class="btn-delete" (click)="onDelete()">
+                  🗑 Удалить объявление
+                </button>
+              }
+            </div>
+          </div>
+  
+          <div class="booking-card">
+            <h3>${{ property.price_per_night }} <span>/ ночь</span></h3>
+  
+            @if (!isLoggedIn()) {
+              <div class="login-prompt">
+                <p>Войдите чтобы забронировать</p>
+                <a routerLink="/login" class="btn-primary">Войти</a>
+              </div>
+            }
+  
+            @if (isLoggedIn()) {
+              <div class="booking-form">
+                <div class="field">
+                  <label>Дата заезда</label>
+                  <input
+                    type="date"
+                    [(ngModel)]="booking.check_in"
+                    name="check_in"
+                  />
+                </div>
+  
+                <div class="field">
+                  <label>Дата выезда</label>
+                  <input
+                    type="date"
+                    [(ngModel)]="booking.check_out"
+                    name="check_out"
+                  />
+                </div>
+  
+                <div class="field">
+                  <label>Количество гостей</label>
+                  <input
+                    type="number"
+                    [(ngModel)]="booking.guests_count"
+                    name="guests_count"
+                    min="1"
+                    [max]="property.max_guests"
+                  />
+                </div>
+  
+                @if (errorMsg) {
+                  <div class="error-msg">{{ errorMsg }}</div>
+                }
+  
+                @if (successMsg) {
+                  <div class="success-msg">{{ successMsg }}</div>
+                }
+  
+                <button class="btn-primary" (click)="onBook()">
+                  Забронировать
+                </button>
+              </div>
+            }
+          </div>
+  
+        </div>
+      }
+  
+    </main>
+  
+    <footer class="footer">
+      <p>© 2025 RentEase</p>
+    </footer>
+  
+  </div>
