@@ -1,1 +1,64 @@
-<p>my-bookings works!</p>
+<div class="page-wrapper">
+
+    <header class="navbar">
+      <a class="logo" routerLink="/">🏠 RentEase</a>
+      <nav>
+        <a routerLink="/properties">Все объекты</a>
+        <a routerLink="/login" class="btn-nav">Выйти</a>
+      </nav>
+    </header>
+  
+    <main class="main">
+      <h1>Мои бронирования</h1>
+  
+      @if (isLoading) {
+        <div class="state">
+          <div class="spinner"></div>
+          <p>Загружаем...</p>
+        </div>
+      }
+  
+      @if (!isLoading && errorMsg) {
+        <div class="state error">
+          <p>{{ errorMsg }}</p>
+        </div>
+      }
+  
+      @if (!isLoading && !errorMsg && bookings.length === 0) {
+        <div class="state">
+          <p>📭 У вас пока нет бронирований</p>
+          <a routerLink="/properties" class="btn-primary">Найти жильё</a>
+        </div>
+      }
+  
+      @if (!isLoading && !errorMsg && bookings.length > 0) {
+        <div class="bookings-list">
+          @for (booking of bookings; track booking.id) {
+            <div class="booking-card">
+              <div class="booking-info">
+                <div class="booking-id">Бронь #{{ booking.id }}</div>
+                <div class="booking-dates">
+                  <span>📅 {{ booking.check_in }}</span>
+                  <span class="arrow">→</span>
+                  <span>{{ booking.check_out }}</span>
+                </div>
+                <div class="booking-meta">
+                  <span>👥 {{ booking.guests_count }} гост.</span>
+                  <span class="booking-price">${{ booking.total_price }}</span>
+                </div>
+              </div>
+              <a [routerLink]="['/properties', booking.property]" class="btn-link">
+                Смотреть объект →
+              </a>
+            </div>
+          }
+        </div>
+      }
+  
+    </main>
+  
+    <footer class="footer">
+      <p>© 2025 RentEase</p>
+    </footer>
+  
+  </div>
