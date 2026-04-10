@@ -1,7 +1,11 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { BookingService } from '../../services/booking.service';
+import { PropertyService } from '../../services/property.service';
 import { IBooking } from '../../interfaces/booking.interface';
+import { IProperty } from '../../interfaces/property.interface';
+import { getPropertyImageUrl } from '../../utils/property-image.utils';
 
 @Component({
   selector: 'app-my-bookings',
@@ -12,15 +16,25 @@ import { IBooking } from '../../interfaces/booking.interface';
 })
 export class MyBookings implements OnInit {
   bookings = signal<IBooking[]>([]);
+  propertiesMap = signal<Map<number, IProperty>>(new Map());
   isLoading = signal(true);
   errorMsg = signal('');
 
-  constructor(private bookingService: BookingService) {}
+  constructor(
+    private bookingService: BookingService,
+    private propertyService: PropertyService
+  ) {}
 
   ngOnInit(): void {
-    this.bookingService.getMyBookings().subscribe({
-      next: (data) => {
-        this.bookings.set(data);
+    forkJoin({
+      bookings: this.bookingService.getMyBookings(),
+      properties: this.propertyService.getAll()
+    }).subscribe({
+      next: ({ bookings, properties }) => {
+        this.bookings.set(bookings);
+        const map = new Map<number, IProperty>();
+        properties.forEach(p => map.set(p.id, p));
+        this.propertiesMap.set(map);
         this.isLoading.set(false);
       },
       error: () => {
@@ -28,5 +42,24 @@ export class MyBookings implements OnInit {
         this.isLoading.set(false);
       }
     });
+  }
+
+  getProperty(id: number): IProperty | undefined {
+    return this.propertiesMap().get(id);
+  }
+
+  getPropertyImage(id: number): string {
+    return getPropertyImageUrl(id, 240, 180);
+  }
+
+  formatDate(dateStr: string): string {
+    return new Date(dateStr).toLocaleDateString('ru-RU', {
+      day: 'numeric', month: 'short', year: 'numeric'
+    });
+  }
+
+  nightsCount(checkIn: string, checkOut: string): number {
+    const diff = new Date(checkOut).getTime() - new Date(checkIn).getTime();
+    return Math.round(diff / (1000 * 60 * 60 * 24));
   }
 }

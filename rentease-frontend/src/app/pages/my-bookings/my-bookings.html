@@ -9,7 +9,12 @@
   </header>
 
   <main class="main">
-    <h1>Мои бронирования</h1>
+    <div class="page-header">
+      <h1>Мои бронирования</h1>
+      @if (!isLoading() && !errorMsg() && bookings().length > 0) {
+        <span class="bookings-count">{{ bookings().length }} {{ bookings().length === 1 ? 'бронь' : bookings().length < 5 ? 'брони' : 'броней' }}</span>
+      }
+    </div>
 
     @if (isLoading()) {
       <div class="state">
@@ -25,8 +30,10 @@
     }
 
     @if (!isLoading() && !errorMsg() && bookings().length === 0) {
-      <div class="state">
-        <p><i class="ci-Mail_Open"></i> У вас пока нет бронирований</p>
+      <div class="state empty">
+        <div class="empty-icon"><i class="ci-Mail_Open"></i></div>
+        <h2>Пока нет бронирований</h2>
+        <p>Найдите идеальное жильё и забронируйте его в пару кликов</p>
         <a routerLink="/properties" class="btn-primary">Найти жильё</a>
       </div>
     }
@@ -35,21 +42,51 @@
       <div class="bookings-list">
         @for (booking of bookings(); track booking.id) {
           <div class="booking-card">
-            <div class="booking-info">
-              <div class="booking-id">Бронь #{{ booking.id }}</div>
-              <div class="booking-dates">
-                <span><i class="ci-Calendar"></i> {{ booking.check_in }}</span>
-                <span class="arrow"><i class="ci-Arrow_Right_MD"></i></span>
-                <span>{{ booking.check_out }}</span>
+            <a [routerLink]="['/properties', booking.property]" class="card-image-link">
+              <img
+                class="property-thumb"
+                [src]="getPropertyImage(booking.property)"
+                [alt]="getProperty(booking.property)?.title || 'Объект'"
+              />
+            </a>
+            <div class="card-body">
+              <div class="card-top">
+                <div class="property-info">
+                  <a [routerLink]="['/properties', booking.property]" class="property-title">
+                    {{ getProperty(booking.property)?.title || 'Объект #' + booking.property }}
+                  </a>
+                  @if (getProperty(booking.property)?.city) {
+                    <span class="property-city"><i class="ci-Location"></i> {{ getProperty(booking.property)?.city }}</span>
+                  }
+                </div>
+                <span class="booking-badge">Бронь #{{ booking.id }}</span>
               </div>
-              <div class="booking-meta">
-                <span><i class="ci-Users_Group"></i> {{ booking.guests_count }} гост.</span>
-                <span class="booking-price">${{ booking.total_price }}</span>
+
+              <div class="card-details">
+                <div class="detail-item">
+                  <span class="detail-label">Заезд</span>
+                  <span class="detail-value">{{ formatDate(booking.check_in) }}</span>
+                </div>
+                <div class="detail-divider"><i class="ci-Arrow_Right_MD"></i></div>
+                <div class="detail-item">
+                  <span class="detail-label">Выезд</span>
+                  <span class="detail-value">{{ formatDate(booking.check_out) }}</span>
+                </div>
+                <div class="detail-nights">
+                  {{ nightsCount(booking.check_in, booking.check_out) }} ноч.
+                </div>
+              </div>
+
+              <div class="card-footer">
+                <div class="card-meta">
+                  <span class="meta-item"><i class="ci-Users_Group"></i> {{ booking.guests_count }} гост.</span>
+                  <span class="meta-price">${{ booking.total_price }}</span>
+                </div>
+                <a [routerLink]="['/properties', booking.property]" class="btn-link">
+                  Смотреть объект <i class="ci-Arrow_Right_MD"></i>
+                </a>
               </div>
             </div>
-            <a [routerLink]="['/properties', booking.property]" class="btn-link">
-              Смотреть объект <i class="ci-Arrow_Right_MD"></i>
-            </a>
           </div>
         }
       </div>
