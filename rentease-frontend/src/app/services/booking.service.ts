@@ -18,4 +18,8 @@ export class BookingService {
   getMyBookings(): Observable<IBooking[]> {
     return this.http.get<IBooking[]>(`${this.apiUrl}/bookings/`);
   }
+
+  cancel(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/bookings/${id}/`);
+  }
 }

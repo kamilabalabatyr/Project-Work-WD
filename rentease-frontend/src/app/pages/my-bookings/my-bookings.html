@@ -82,9 +82,23 @@
                   <span class="meta-item"><i class="ci-Users_Group"></i> {{ booking.guests_count }} гост.</span>
                   <span class="meta-price">${{ booking.total_price }}</span>
                 </div>
-                <a [routerLink]="['/properties', booking.property]" class="btn-link">
-                  Смотреть объект <i class="ci-Arrow_Right_MD"></i>
-                </a>
+                <div class="card-actions">
+                  <button
+                    class="btn-cancel"
+                    [disabled]="cancellingIds().has(booking.id)"
+                    (click)="cancelBooking(booking.id)"
+                  >
+                    @if (cancellingIds().has(booking.id)) {
+                      <span class="btn-spinner"></span>
+                    } @else {
+                      <i class="ci-Close_MD"></i>
+                    }
+                    Отменить
+                  </button>
+                  <a [routerLink]="['/properties', booking.property]" class="btn-link">
+                    Смотреть <i class="ci-Arrow_Right_MD"></i>
+                  </a>
+                </div>
               </div>
             </div>
           </div>

@@ -95,9 +95,9 @@ class BookingListCreateView(generics.ListCreateAPIView):
 
 
 #
-# CBV #4 — Booking Detail
+# CBV #4 — Booking Detail / Delete
 #
-class BookingDetailView(generics.RetrieveAPIView):
+class BookingDetailView(generics.RetrieveDestroyAPIView):
     serializer_class = BookingModelSerializer
     permission_classes = [IsAuthenticated]
 

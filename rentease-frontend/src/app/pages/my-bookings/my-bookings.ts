@@ -19,6 +19,7 @@ export class MyBookings implements OnInit {
   propertiesMap = signal<Map<number, IProperty>>(new Map());
   isLoading = signal(true);
   errorMsg = signal('');
+  cancellingIds = signal<Set<number>>(new Set());
 
   constructor(
     private bookingService: BookingService,
@@ -61,5 +62,20 @@ export class MyBookings implements OnInit {
   nightsCount(checkIn: string, checkOut: string): number {
     const diff = new Date(checkOut).getTime() - new Date(checkIn).getTime();
     return Math.round(diff / (1000 * 60 * 60 * 24));
+  }
+
+  cancelBooking(id: number): void {
+    if (!confirm('Отменить бронирование?')) return;
+    this.cancellingIds.update(s => new Set(s).add(id));
+    this.bookingService.cancel(id).subscribe({
+      next: () => {
+        this.bookings.update(list => list.filter(b => b.id !== id));
+        this.cancellingIds.update(s => { const ns = new Set(s); ns.delete(id); return ns; });
+      },
+      error: () => {
+        this.cancellingIds.update(s => { const ns = new Set(s); ns.delete(id); return ns; });
+        alert('Не удалось отменить бронирование');
+      }
+    });
   }
 }
