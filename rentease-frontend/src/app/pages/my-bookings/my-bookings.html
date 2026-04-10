@@ -1,7 +1,7 @@
 <div class="page-wrapper">
 
   <header class="navbar">
-    <a class="logo" routerLink="/">🏠 RentEase</a>
+    <a class="logo" routerLink="/"><img src="/logo.png" alt="RentEase" height="28"> RentEase</a>
     <nav>
       <a routerLink="/properties">Все объекты</a>
       <a routerLink="/login" class="btn-nav">Выйти</a>
@@ -26,7 +26,7 @@
 
     @if (!isLoading() && !errorMsg() && bookings().length === 0) {
       <div class="state">
-        <p>📭 У вас пока нет бронирований</p>
+        <p><i class="ci-Mail_Open"></i> У вас пока нет бронирований</p>
         <a routerLink="/properties" class="btn-primary">Найти жильё</a>
       </div>
     }
