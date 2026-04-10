@@ -38,17 +38,17 @@
             <div class="booking-info">
               <div class="booking-id">Бронь #{{ booking.id }}</div>
               <div class="booking-dates">
-                <span>📅 {{ booking.check_in }}</span>
-                <span class="arrow">→</span>
+                <span><i class="ci-Calendar"></i> {{ booking.check_in }}</span>
+                <span class="arrow"><i class="ci-Arrow_Right_MD"></i></span>
                 <span>{{ booking.check_out }}</span>
               </div>
               <div class="booking-meta">
-                <span>👥 {{ booking.guests_count }} гост.</span>
+                <span><i class="ci-Users_Group"></i> {{ booking.guests_count }} гост.</span>
                 <span class="booking-price">${{ booking.total_price }}</span>
               </div>
             </div>
             <a [routerLink]="['/properties', booking.property]" class="btn-link">
-              Смотреть объект →
+              Смотреть объект <i class="ci-Arrow_Right_MD"></i>
             </a>
           </div>
         }

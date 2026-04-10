@@ -25,12 +25,12 @@
     @if (!isLoading() && errorMsg() && !property()) {
       <div class="state error">
         <p>{{ errorMsg() }}</p>
-        <a routerLink="/properties" class="btn-back">← Назад к списку</a>
+        <a routerLink="/properties" class="btn-back"><i class="ci-Arrow_Left_MD"></i> Назад к списку</a>
       </div>
     }
 
     @if (!isLoading() && property()) {
-      <a routerLink="/properties" class="btn-back">← Назад к списку</a>
+      <a routerLink="/properties" class="btn-back"><i class="ci-Arrow_Left_MD"></i> Назад к списку</a>
 
       <div class="detail-layout">
 
@@ -38,7 +38,7 @@
           <img [src]="getImage()" [alt]="property()!.title" class="detail-img" />
 
           <div class="detail-body">
-            <div class="detail-city">📍 {{ property()!.city }}</div>
+            <div class="detail-city"><i class="ci-Map_Pin"></i> {{ property()!.city }}</div>
             <h1>{{ property()!.title }}</h1>
             <p class="detail-desc">{{ property()!.description }}</p>
 
@@ -55,7 +55,7 @@
 
             @if (isOwner()) {
               <button class="btn-delete" (click)="onDelete()">
-                🗑 Удалить объявление
+                <i class="ci-Trash_Empty"></i> Удалить объявление
               </button>
             }
           </div>

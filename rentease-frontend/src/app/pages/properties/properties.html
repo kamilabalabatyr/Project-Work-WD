@@ -136,14 +136,14 @@
           <a class="card" [routerLink]="['/properties', property.id]">
             <img [src]="getImage(property)" [alt]="property.title" class="card-img" />
             <div class="card-body">
-              <div class="card-city">📍 {{ property.city }}</div>
+              <div class="card-city"><i class="ci-Map_Pin"></i> {{ property.city }}</div>
               <h3>{{ property.title }}</h3>
               <div class="card-footer">
                 <span class="price">
                   ${{ property.price_per_night }}
                   <span>/ ночь</span>
                 </span>
-                <span class="cta">Подробнее →</span>
+                <span class="cta">Подробнее <i class="ci-Arrow_Right_MD"></i></span>
               </div>
             </div>
           </a>
