@@ -1,9 +1,10 @@
 from rest_framework import serializers
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
-from .models import Property
+from .models import Property, Booking, Review
 
 
-# ─── Serializer #1: RegisterSerializer ───────────────────────────────
+
 class RegisterSerializer(serializers.Serializer):
     username = serializers.CharField(max_length=150)
     email = serializers.EmailField()
@@ -26,13 +27,18 @@ class RegisterSerializer(serializers.Serializer):
         return user
 
 
-# ─── Serializer #2: LoginSerializer ──────────────────────────────────
 class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField(write_only=True)
 
+    def validate(self, data):
+        user = authenticate(username=data['username'], password=data['password'])
+        if user is None:
+            raise serializers.ValidationError('Invalid username or password.')
+        data['user'] = user
+        return data
 
-# ─── ModelSerializer #1: PropertyModelSerializer ─────────────────────
+
 class PropertyModelSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
 
@@ -41,3 +47,24 @@ class PropertyModelSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'description', 'city', 'price_per_night',
                   'max_guests', 'owner', 'created_at']
         read_only_fields = ['owner', 'created_at']
+
+
+class BookingModelSerializer(serializers.ModelSerializer):
+    guest = serializers.ReadOnlyField(source='guest.username')
+
+    class Meta:
+        model = Booking
+        fields = ['id', 'property', 'guest', 'check_in', 'check_out', 'guests_count', 'total_price', 'created_at']
+        read_only_fields = ['guest', 'created_at']
+
+    def validate(self, data):
+        if data['check_out'] <= data['check_in']:
+            raise serializers.ValidationError({'check_out': 'Check-out must be after check-in.'})
+        return data
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Review
+        fields = ['id', 'booking', 'rating', 'comment', 'created_at']
+        read_only_fields = ['created_at']
