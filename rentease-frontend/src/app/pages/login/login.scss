@@ -15,6 +15,9 @@
     max-width: 400px;
   
     .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       font-size: 24px;
       color: #FF385C;
       margin-bottom: 8px;
