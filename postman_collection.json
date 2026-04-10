@@ -1,0 +1,489 @@
+{
+  "info": {
+    "name": "RentEase API",
+    "_postman_id": "rentease-api-collection",
+    "description": "RentEase — AirBNB-клон. Django + DRF backend.\n\nБазовый URL: http://localhost:8000/api\n\nАвторизация: после логина токен сохраняется автоматически в переменную {{token}}.\nВсе защищённые запросы используют заголовок: Authorization: Token {{token}}",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "propertyId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "bookingId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"testpass123\",\n  \"password2\": \"testpass123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register/",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register", ""]
+            },
+            "description": "Создать нового пользователя. Возвращает токен."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('token', json.token);",
+                  "    console.log('Token saved:', json.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"token\": \"9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b\",\n  \"user_id\": 1,\n  \"username\": \"testuser\"\n}"
+            },
+            {
+              "name": "400 Bad Request — пароли не совпадают",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"password2\": [\"Passwords do not match.\"]\n}"
+            },
+            {
+              "name": "400 Bad Request — username занят",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"username\": [\"Username already exists.\"]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"testpass123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login/",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login", ""]
+            },
+            "description": "Войти. Токен сохраняется автоматически в переменную {{token}}."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('token', json.token);",
+                  "    console.log('Token saved:', json.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"token\": \"9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b\",\n  \"user_id\": 1,\n  \"username\": \"testuser\"\n}"
+            },
+            {
+              "name": "401 Unauthorized — неверные данные",
+              "status": "Unauthorized",
+              "code": 401,
+              "body": "{\n  \"error\": \"Invalid credentials.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout/",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout", ""]
+            },
+            "description": "Удаляет токен из БД. Требует авторизации."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    pm.collectionVariables.set('token', '');",
+                  "    console.log('Token cleared');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"detail\": \"Logged out.\"\n}"
+            },
+            {
+              "name": "401 Unauthorized — нет токена",
+              "status": "Unauthorized",
+              "code": 401,
+              "body": "{\n  \"detail\": \"Authentication credentials were not provided.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Properties",
+      "item": [
+        {
+          "name": "List all properties",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/properties/",
+              "host": ["{{baseUrl}}"],
+              "path": ["properties", ""]
+            },
+            "description": "Публичный список всех объектов. Авторизация не нужна."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "[\n  {\n    \"id\": 1,\n    \"title\": \"Уютная квартира в центре\",\n    \"description\": \"Двухкомнатная квартира рядом с метро\",\n    \"city\": \"Алматы\",\n    \"price_per_night\": \"15000.00\",\n    \"max_guests\": 4,\n    \"owner\": \"testuser\",\n    \"created_at\": \"2026-04-10T10:00:00Z\"\n  }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Create property",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Уютная квартира в центре\",\n  \"description\": \"Двухкомнатная квартира рядом с метро\",\n  \"city\": \"Алматы\",\n  \"price_per_night\": \"15000.00\",\n  \"max_guests\": 4\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/properties/",
+              "host": ["{{baseUrl}}"],
+              "path": ["properties", ""]
+            },
+            "description": "Создать объект. owner берётся из токена автоматически."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('propertyId', json.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"id\": 1,\n  \"title\": \"Уютная квартира в центре\",\n  \"description\": \"Двухкомнатная квартира рядом с метро\",\n  \"city\": \"Алматы\",\n  \"price_per_night\": \"15000.00\",\n  \"max_guests\": 4,\n  \"owner\": \"testuser\",\n  \"created_at\": \"2026-04-10T10:00:00Z\"\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "status": "Unauthorized",
+              "code": 401,
+              "body": "{\n  \"detail\": \"Authentication credentials were not provided.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get property detail",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/properties/{{propertyId}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["properties", "{{propertyId}}", ""]
+            },
+            "description": "Детали одного объекта. Публичный."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"title\": \"Уютная квартира в центре\",\n  \"description\": \"Двухкомнатная квартира рядом с метро\",\n  \"city\": \"Алматы\",\n  \"price_per_night\": \"15000.00\",\n  \"max_guests\": 4,\n  \"owner\": \"testuser\",\n  \"created_at\": \"2026-04-10T10:00:00Z\"\n}"
+            },
+            {
+              "name": "404 Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "body": "{\n  \"detail\": \"Not found.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update property (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Обновлённое название\",\n  \"description\": \"Новое описание\",\n  \"city\": \"Астана\",\n  \"price_per_night\": \"20000.00\",\n  \"max_guests\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/properties/{{propertyId}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["properties", "{{propertyId}}", ""]
+            },
+            "description": "Полное обновление. Только владелец."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"title\": \"Обновлённое название\",\n  \"description\": \"Новое описание\",\n  \"city\": \"Астана\",\n  \"price_per_night\": \"20000.00\",\n  \"max_guests\": 2,\n  \"owner\": \"testuser\",\n  \"created_at\": \"2026-04-10T10:00:00Z\"\n}"
+            },
+            {
+              "name": "403 Forbidden — не владелец",
+              "status": "Forbidden",
+              "code": 403,
+              "body": "{\n  \"detail\": \"You do not have permission to perform this action.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Partial update property (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"price_per_night\": \"12000.00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/properties/{{propertyId}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["properties", "{{propertyId}}", ""]
+            },
+            "description": "Частичное обновление. Только владелец."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"title\": \"Уютная квартира в центре\",\n  \"description\": \"Двухкомнатная квартира рядом с метро\",\n  \"city\": \"Алматы\",\n  \"price_per_night\": \"12000.00\",\n  \"max_guests\": 4,\n  \"owner\": \"testuser\",\n  \"created_at\": \"2026-04-10T10:00:00Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete property",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/properties/{{propertyId}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["properties", "{{propertyId}}", ""]
+            },
+            "description": "Удалить объект. Только владелец."
+          },
+          "response": [
+            {
+              "name": "204 No Content",
+              "status": "No Content",
+              "code": 204,
+              "body": ""
+            },
+            {
+              "name": "403 Forbidden — не владелец",
+              "status": "Forbidden",
+              "code": 403,
+              "body": "{\n  \"detail\": \"You do not have permission to perform this action.\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "My bookings (list)",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", ""]
+            },
+            "description": "Список бронирований текущего пользователя."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "[\n  {\n    \"id\": 1,\n    \"property\": 1,\n    \"guest\": \"testuser\",\n    \"check_in\": \"2026-05-01\",\n    \"check_out\": \"2026-05-05\",\n    \"guests_count\": 2,\n    \"total_price\": \"60000.00\",\n    \"created_at\": \"2026-04-10T10:00:00Z\"\n  }\n]"
+            },
+            {
+              "name": "401 Unauthorized",
+              "status": "Unauthorized",
+              "code": 401,
+              "body": "{\n  \"detail\": \"Authentication credentials were not provided.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create booking",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"property\": 1,\n  \"check_in\": \"2026-05-01\",\n  \"check_out\": \"2026-05-05\",\n  \"guests_count\": 2,\n  \"total_price\": \"60000.00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/bookings/",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", ""]
+            },
+            "description": "Создать бронирование. guest берётся из токена автоматически."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const json = pm.response.json();",
+                  "    pm.collectionVariables.set('bookingId', json.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "response": [
+            {
+              "name": "201 Created",
+              "status": "Created",
+              "code": 201,
+              "body": "{\n  \"id\": 1,\n  \"property\": 1,\n  \"guest\": \"testuser\",\n  \"check_in\": \"2026-05-01\",\n  \"check_out\": \"2026-05-05\",\n  \"guests_count\": 2,\n  \"total_price\": \"60000.00\",\n  \"created_at\": \"2026-04-10T10:00:00Z\"\n}"
+            },
+            {
+              "name": "400 Bad Request — check_out раньше check_in",
+              "status": "Bad Request",
+              "code": 400,
+              "body": "{\n  \"check_out\": [\"Check-out must be after check-in.\"]\n}"
+            },
+            {
+              "name": "401 Unauthorized",
+              "status": "Unauthorized",
+              "code": 401,
+              "body": "{\n  \"detail\": \"Authentication credentials were not provided.\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get booking detail",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Authorization", "value": "Token {{token}}" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/bookings/{{bookingId}}/",
+              "host": ["{{baseUrl}}"],
+              "path": ["bookings", "{{bookingId}}", ""]
+            },
+            "description": "Детали одного бронирования. Только своё."
+          },
+          "response": [
+            {
+              "name": "200 OK",
+              "status": "OK",
+              "code": 200,
+              "body": "{\n  \"id\": 1,\n  \"property\": 1,\n  \"guest\": \"testuser\",\n  \"check_in\": \"2026-05-01\",\n  \"check_out\": \"2026-05-05\",\n  \"guests_count\": 2,\n  \"total_price\": \"60000.00\",\n  \"created_at\": \"2026-04-10T10:00:00Z\"\n}"
+            },
+            {
+              "name": "404 Not Found — чужое бронирование",
+              "status": "Not Found",
+              "code": 404,
+              "body": "{\n  \"detail\": \"Not found.\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
