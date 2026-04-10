@@ -1,89 +1,116 @@
 <div class="login-wrapper">
-    <div class="login-card">
-  
-      <h1 class="logo">🏠 RentEase</h1>
-  
-      <h2>{{ isLoginMode ? 'Войти' : 'Регистрация' }}</h2>
-  
-      <form *ngIf="isLoginMode" (ngSubmit)="onLogin()">
+  <div class="login-card">
+
+    <h1 class="logo">🏠 RentEase</h1>
+
+    <h2>{{ isLoginMode() ? 'Войти' : 'Регистрация' }}</h2>
+
+    @if (isLoginMode()) {
+      <form (ngSubmit)="onLogin()">
         <div class="field">
           <label>Имя пользователя</label>
           <input
             type="text"
-            [(ngModel)]="credentials.username"
-            name="username"
+            [value]="credentials().username"
+            (input)="credentials.update(c => ({...c, username: $any($event.target).value}))"
             placeholder="Введите username"
             required
           />
         </div>
-  
+
         <div class="field">
           <label>Пароль</label>
           <input
             type="password"
-            [(ngModel)]="credentials.password"
-            name="password"
+            [value]="credentials().password"
+            (input)="credentials.update(c => ({...c, password: $any($event.target).value}))"
             placeholder="Введите пароль"
             required
           />
         </div>
-  
-        <div class="error" *ngIf="errorMsg">{{ errorMsg }}</div>
-  
-        <button type="submit" class="btn-primary" [disabled]="isLoading">
-          <span *ngIf="isLoading">Загрузка...</span>
-          <span *ngIf="!isLoading">Войти</span>
+
+        @if (errorMsg()) {
+          <div class="error">{{ errorMsg() }}</div>
+        }
+
+        <button type="submit" class="btn-primary" [disabled]="isLoading()">
+          @if (isLoading()) { <span>Загрузка...</span> } @else { <span>Войти</span> }
         </button>
       </form>
-  
-      <form *ngIf="!isLoginMode" (ngSubmit)="onRegister()">
+    } @else {
+      <form (ngSubmit)="onRegister()">
         <div class="field">
           <label>Имя пользователя</label>
           <input
             type="text"
-            [(ngModel)]="registerData.username"
-            name="username"
+            [value]="registerData().username"
+            (input)="registerData.update(r => ({...r, username: $any($event.target).value}))"
             placeholder="Придумайте username"
             required
           />
+          @if (getFieldError('username')) {
+            <span class="field-error">{{ getFieldError('username') }}</span>
+          }
         </div>
-  
+
         <div class="field">
           <label>Email</label>
           <input
             type="email"
-            [(ngModel)]="registerData.email"
-            name="email"
+            [value]="registerData().email"
+            (input)="registerData.update(r => ({...r, email: $any($event.target).value}))"
             placeholder="Введите email"
             required
           />
+          @if (getFieldError('email')) {
+            <span class="field-error">{{ getFieldError('email') }}</span>
+          }
         </div>
-  
+
         <div class="field">
           <label>Пароль</label>
           <input
             type="password"
-            [(ngModel)]="registerData.password"
-            name="password"
+            [value]="registerData().password"
+            (input)="registerData.update(r => ({...r, password: $any($event.target).value}))"
             placeholder="Придумайте пароль"
             required
           />
+          @if (getFieldError('password')) {
+            <span class="field-error">{{ getFieldError('password') }}</span>
+          }
         </div>
-  
-        <div class="error" *ngIf="errorMsg">{{ errorMsg }}</div>
-  
-        <button type="submit" class="btn-primary" [disabled]="isLoading">
-          <span *ngIf="isLoading">Загрузка...</span>
-          <span *ngIf="!isLoading">Зарегистрироваться</span>
+
+        <div class="field">
+          <label>Повторите пароль</label>
+          <input
+            type="password"
+            [value]="registerData().password2"
+            (input)="registerData.update(r => ({...r, password2: $any($event.target).value}))"
+            placeholder="Повторите пароль"
+            required
+          />
+          @if (getFieldError('password2')) {
+            <span class="field-error">{{ getFieldError('password2') }}</span>
+          }
+        </div>
+
+        @if (errorMsg()) {
+          <div class="error">{{ errorMsg() }}</div>
+        }
+
+        <button type="submit" class="btn-primary" [disabled]="isLoading()">
+          @if (isLoading()) { <span>Загрузка...</span> } @else { <span>Зарегистрироваться</span> }
         </button>
       </form>
-  
-      <p class="toggle-text">
-        {{ isLoginMode ? 'Нет аккаунта?' : 'Уже есть аккаунт?' }}
-        <a (click)="toggleMode()">
-          {{ isLoginMode ? 'Зарегистрироваться' : 'Войти' }}
-        </a>
-      </p>
-  
-    </div>
+    }
+
+    <p class="toggle-text">
+      {{ isLoginMode() ? 'Нет аккаунта?' : 'Уже есть аккаунт?' }}
+      <a (click)="toggleMode()">
+        {{ isLoginMode() ? 'Зарегистрироваться' : 'Войти' }}
+      </a>
+    </p>
+
   </div>
+</div>

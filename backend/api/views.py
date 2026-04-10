@@ -63,7 +63,7 @@ def logout_view(request):
 # CBV #1 — Property List / Create
 #  
 class PropertyListCreateView(generics.ListCreateAPIView):
-    queryset = Property.objects.all()
+    queryset = Property.objects.select_related('owner').all()
     serializer_class = PropertyModelSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 

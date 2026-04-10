@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PropertyService } from '../../services/property.service';
@@ -9,84 +8,77 @@ import { IProperty } from '../../interfaces/property.interface';
 @Component({
   selector: 'app-properties',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './properties.html',
   styleUrl: './properties.scss'
 })
 export class Properties implements OnInit {
-  properties: IProperty[] = [];
-  filteredProperties: IProperty[] = [];
-  isLoading = true;
-  errorMsg = '';
+  properties = signal<IProperty[]>([]);
+  filteredProperties = signal<IProperty[]>([]);
+  isLoading = signal(true);
+  errorMsg = signal('');
 
-  filterCity = '';
-  filterMaxPrice: number | null = null;
+  filterCity = signal('');
+  filterMaxPrice = signal<number | null>(null);
 
-  showAddForm = false;
-  newProperty = {
-    title: '',
-    price_per_night: undefined as number | undefined,
-    city: ''
-};
+  showAddForm = signal(false);
+  newProperty = signal({ title: '', price_per_night: undefined as number | undefined, city: '' });
 
   constructor(
     private propertyService: PropertyService,
     private authService: AuthService
   ) {}
 
-  // API уvent #1: loading the events
   ngOnInit(): void {
     this.loadProperties();
   }
 
   loadProperties(): void {
-    this.isLoading = true;
+    this.isLoading.set(true);
     this.propertyService.getAll().subscribe({
       next: (data) => {
-        this.properties = data;
-        this.filteredProperties = data;
-        this.isLoading = false;
+        this.properties.set(data);
+        this.filteredProperties.set(data);
+        this.isLoading.set(false);
       },
       error: () => {
-        this.errorMsg = 'Не удалось загрузить объекты';
-        this.isLoading = false;
+        this.errorMsg.set('Не удалось загрузить объекты');
+        this.isLoading.set(false);
       }
     });
   }
 
   applyFilters(): void {
-    this.filteredProperties = this.properties.filter(p => {
-      const matchCity = this.filterCity
-        ? p.city.toLowerCase().includes(this.filterCity.toLowerCase())
+    this.filteredProperties.set(this.properties().filter(p => {
+      const matchCity = this.filterCity()
+        ? p.city.toLowerCase().includes(this.filterCity().toLowerCase())
         : true;
-      const matchPrice = this.filterMaxPrice
-        ? p.price_per_night <= this.filterMaxPrice
+      const matchPrice = this.filterMaxPrice()
+        ? p.price_per_night <= this.filterMaxPrice()!
         : true;
       return matchCity && matchPrice;
-    });
+    }));
   }
 
   clearFilters(): void {
-    this.filterCity = '';
-    this.filterMaxPrice = null;
-    this.filteredProperties = [...this.properties];
+    this.filterCity.set('');
+    this.filterMaxPrice.set(null);
+    this.filteredProperties.set([...this.properties()]);
   }
 
-  // API event #2: creating the add
   onAddProperty(): void {
-    if (!this.newProperty.title || !this.newProperty.city || !this.newProperty.price_per_night) {
-      return;
-    }
+    const p = this.newProperty();
+    if (!p.title || !p.city || !p.price_per_night) return;
 
-    this.propertyService.create(this.newProperty).subscribe({
+    this.propertyService.create(p).subscribe({
       next: (created) => {
-        this.properties.unshift(created);
-        this.filteredProperties.unshift(created);
-        this.showAddForm = false;
-        this.newProperty = { title: '', price_per_night: undefined, city: '' };
+        this.properties.update(list => [created, ...list]);
+        this.filteredProperties.update(list => [created, ...list]);
+        this.showAddForm.set(false);
+        this.newProperty.set({ title: '', price_per_night: undefined, city: '' });
       },
       error: () => {
-        this.errorMsg = 'Не удалось создать объявление';
+        this.errorMsg.set('Не удалось создать объявление');
       }
     });
   }
@@ -95,7 +87,15 @@ export class Properties implements OnInit {
     return this.authService.isLoggedIn();
   }
 
-  getImage(property: IProperty): string {
-    return `https://picsum.photos/seed/${property.id}/400/260`;
+  getGradient(property: IProperty): string {
+    const colors = [
+      'linear-gradient(135deg, #FF385C, #ff6b35)',
+      'linear-gradient(135deg, #6C63FF, #3ecfcf)',
+      'linear-gradient(135deg, #f093fb, #f5576c)',
+      'linear-gradient(135deg, #4facfe, #00f2fe)',
+      'linear-gradient(135deg, #43e97b, #38f9d7)',
+      'linear-gradient(135deg, #fa709a, #fee140)',
+    ];
+    return colors[property.id % colors.length];
   }
 }

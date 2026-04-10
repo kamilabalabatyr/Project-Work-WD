@@ -1,142 +1,141 @@
 <div class="page-wrapper">
 
-    <!-- navbar -->
-    <header class="navbar">
-      <a class="logo" routerLink="/">🏠 RentEase</a>
-      <nav>
-        <a routerLink="/">Главная</a>
-        @if (isLoggedIn()) {
-          <a routerLink="/my-bookings">Мои брони</a>
-        }
-        @if (!isLoggedIn()) {
-          <a routerLink="/login" class="btn-nav">Войти</a>
-        }
-      </nav>
-    </header>
-  
-    <main class="main">
-      <div class="top-bar">
-        <h1>Все объекты</h1>
-        @if (isLoggedIn()) {
-          <button class="btn-primary" (click)="showAddForm = !showAddForm">
-            {{ showAddForm ? 'Отмена' : '+ Добавить объявление' }}
-          </button>
-        }
-      </div>
-  
-      <!-- add form -->
-      @if (showAddForm) {
-        <div class="add-form">
-          <h3>Новое объявление</h3>
-          <div class="form-row">
-            <div class="field">
-              <label>Название</label>
-              <input
-                type="text"
-                [(ngModel)]="newProperty.title"
-                name="title"
-                placeholder="Уютная квартира в центре"
-              />
-            </div>
-            <div class="field">
-              <label>Город</label>
-              <input
-                type="text"
-                [(ngModel)]="newProperty.city"
-                name="city"
-                placeholder="Алматы"
-              />
-            </div>
-            <div class="field">
-              <label>Цена за ночь ($)</label>
-              <input
-                type="number"
-                [(ngModel)]="newProperty.price_per_night"
-                name="price"
-                placeholder="50"
-                min="1"
-              />
-            </div>
+  <!-- navbar -->
+  <header class="navbar">
+    <a class="logo" routerLink="/">🏠 RentEase</a>
+    <nav>
+      <a routerLink="/">Главная</a>
+      @if (isLoggedIn()) {
+        <a routerLink="/my-bookings">Мои брони</a>
+      }
+      @if (!isLoggedIn()) {
+        <a routerLink="/login" class="btn-nav">Войти</a>
+      }
+    </nav>
+  </header>
+
+  <main class="main">
+    <div class="top-bar">
+      <h1>Все объекты</h1>
+      @if (isLoggedIn()) {
+        <button class="btn-primary" (click)="showAddForm.set(!showAddForm())">
+          {{ showAddForm() ? 'Отмена' : '+ Добавить объявление' }}
+        </button>
+      }
+    </div>
+
+    <!-- add form -->
+    @if (showAddForm()) {
+      <div class="add-form">
+        <h3>Новое объявление</h3>
+        <div class="form-row">
+          <div class="field">
+            <label>Название</label>
+            <input
+              type="text"
+              [value]="newProperty().title"
+              (input)="newProperty.update(p => ({...p, title: $any($event.target).value}))"
+              placeholder="Уютная квартира в центре"
+            />
           </div>
-          <button class="btn-primary" (click)="onAddProperty()">Опубликовать</button>
+          <div class="field">
+            <label>Город</label>
+            <input
+              type="text"
+              [value]="newProperty().city"
+              (input)="newProperty.update(p => ({...p, city: $any($event.target).value}))"
+              placeholder="Алматы"
+            />
+          </div>
+          <div class="field">
+            <label>Цена за ночь ($)</label>
+            <input
+              type="number"
+              [value]="newProperty().price_per_night"
+              (input)="newProperty.update(p => ({...p, price_per_night: +$any($event.target).value}))"
+              placeholder="50"
+              min="1"
+            />
+          </div>
         </div>
-      }
-  
-      <!-- filters -->
-      <div class="filters">
-        <div class="field">
-          <label>Город</label>
-          <input
-            type="text"
-            [(ngModel)]="filterCity"
-            name="filterCity"
-            placeholder="Поиск по городу..."
-            (ngModelChange)="applyFilters()"
-          />
-        </div>
-        <div class="field">
-          <label>Макс. цена ($)</label>
-          <input
-            type="number"
-            [(ngModel)]="filterMaxPrice"
-            name="filterPrice"
-            placeholder="100"
-            min="0"
-            (ngModelChange)="applyFilters()"
-          />
-        </div>
-        <button class="btn-clear" (click)="clearFilters()">Сбросить</button>
+        <button class="btn-primary" (click)="onAddProperty()">Опубликовать</button>
       </div>
-  
-      <!-- loading -->
-      @if (isLoading) {
-        <div class="state">
-          <div class="spinner"></div>
-          <p>Загружаем...</p>
-        </div>
-      }
-  
-      <!-- error -->
-      @if (!isLoading && errorMsg) {
-        <div class="state error">
-          <p>{{ errorMsg }}</p>
-        </div>
-      }
-  
-      <!-- empty -->
-      @if (!isLoading && !errorMsg && filteredProperties.length === 0) {
-        <div class="state">
-          <p>🔍 Ничего не найдено. Попробуйте изменить фильтры.</p>
-          <button class="btn-clear" (click)="clearFilters()">Сбросить фильтры</button>
-        </div>
-      }
-  <!--grid-->>
-      @if (!isLoading && !errorMsg && filteredProperties.length > 0) {
-        <p class="count">Найдено: {{ filteredProperties.length }}</p>
-        <div class="grid">
-          @for (property of filteredProperties; track property.id) {
-            <a class="card" [routerLink]="['/properties', property.id]">
-              <img [src]="getImage(property)" [alt]="property.title" />
-              <div class="card-body">
-                <div class="card-city">📍 {{ property.city }}</div>
-                <h3>{{ property.title }}</h3>
-                <div class="card-footer">
-                  <span class="price">
-                    ${{ property.price_per_night }}
-                    <span>/ ночь</span>
-                  </span>
-                  <span class="cta">Подробнее →</span>
-                </div>
+    }
+
+    <!-- filters -->
+    <div class="filters">
+      <div class="field">
+        <label>Город</label>
+        <input
+          type="text"
+          [value]="filterCity()"
+          (input)="filterCity.set($any($event.target).value); applyFilters()"
+          placeholder="Поиск по городу..."
+        />
+      </div>
+      <div class="field">
+        <label>Макс. цена ($)</label>
+        <input
+          type="number"
+          [value]="filterMaxPrice()"
+          (input)="filterMaxPrice.set(+$any($event.target).value || null); applyFilters()"
+          placeholder="100"
+          min="0"
+        />
+      </div>
+      <button class="btn-clear" (click)="clearFilters()">Сбросить</button>
+    </div>
+
+    <!-- loading -->
+    @if (isLoading()) {
+      <div class="state">
+        <div class="spinner"></div>
+        <p>Загружаем...</p>
+      </div>
+    }
+
+    <!-- error -->
+    @if (!isLoading() && errorMsg()) {
+      <div class="state error">
+        <p>{{ errorMsg() }}</p>
+      </div>
+    }
+
+    <!-- empty -->
+    @if (!isLoading() && !errorMsg() && filteredProperties().length === 0) {
+      <div class="state">
+        <p>🔍 Ничего не найдено. Попробуйте изменить фильтры.</p>
+        <button class="btn-clear" (click)="clearFilters()">Сбросить фильтры</button>
+      </div>
+    }
+
+    <!-- grid -->
+    @if (!isLoading() && !errorMsg() && filteredProperties().length > 0) {
+      <p class="count">Найдено: {{ filteredProperties().length }}</p>
+      <div class="grid">
+        @for (property of filteredProperties(); track property.id) {
+          <a class="card" [routerLink]="['/properties', property.id]">
+            <div class="card-img" [style.background]="getGradient(property)"></div>
+            <div class="card-body">
+              <div class="card-city">📍 {{ property.city }}</div>
+              <h3>{{ property.title }}</h3>
+              <div class="card-footer">
+                <span class="price">
+                  ${{ property.price_per_night }}
+                  <span>/ ночь</span>
+                </span>
+                <span class="cta">Подробнее →</span>
               </div>
-            </a>
-          }
-        </div>
-      }
-  
-    </main>
-  
-    <footer class="footer">
-      <p>© 2025 RentEase</p>
-    </footer>
-  
-  </div>
+            </div>
+          </a>
+        }
+      </div>
+    }
+
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 RentEase</p>
+  </footer>
+
+</div>

@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { PropertyService } from '../../services/property.service';
@@ -10,21 +9,17 @@ import { IProperty } from '../../interfaces/property.interface';
 @Component({
   selector: 'app-property-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [FormsModule, RouterModule],
   templateUrl: './property-detail.html',
   styleUrl: './property-detail.scss'
 })
 export class PropertyDetail implements OnInit {
-  property: IProperty | null = null;
-  isLoading = true;
-  errorMsg = '';
-  successMsg = '';
+  property = signal<IProperty | null>(null);
+  isLoading = signal(true);
+  errorMsg = signal('');
+  successMsg = signal('');
 
-  booking = {
-    check_in: '',
-    check_out: '',
-    guests_count: 1
-  };
+  booking = signal({ check_in: '', check_out: '', guests_count: 1 });
 
   constructor(
     private route: ActivatedRoute,
@@ -38,51 +33,50 @@ export class PropertyDetail implements OnInit {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.propertyService.getById(id).subscribe({
       next: (data) => {
-        this.property = data;
-        this.isLoading = false;
+        this.property.set(data);
+        this.isLoading.set(false);
       },
       error: () => {
-        this.errorMsg = 'Объект не найден';
-        this.isLoading = false;
+        this.errorMsg.set('Объект не найден');
+        this.isLoading.set(false);
       }
     });
   }
 
   onBook(): void {
-    if (!this.property) return;
-    if (!this.booking.check_in || !this.booking.check_out) {
-      this.errorMsg = 'Заполните даты бронирования';
+    const p = this.property();
+    const b = this.booking();
+    if (!p) return;
+    if (!b.check_in || !b.check_out) {
+      this.errorMsg.set('Заполните даты бронирования');
       return;
     }
 
     this.bookingService.create({
-      property: this.property.id,
-      check_in: this.booking.check_in,
-      check_out: this.booking.check_out,
-      guests_count: this.booking.guests_count
+      property: p.id,
+      check_in: b.check_in,
+      check_out: b.check_out,
+      guests_count: b.guests_count
     }).subscribe({
       next: () => {
-        this.successMsg = 'Бронирование успешно создано!';
-        this.booking = { check_in: '', check_out: '', guests_count: 1 };
-        this.errorMsg = '';
+        this.successMsg.set('Бронирование успешно создано!');
+        this.booking.set({ check_in: '', check_out: '', guests_count: 1 });
+        this.errorMsg.set('');
       },
       error: () => {
-        this.errorMsg = 'Не удалось создать бронирование';
+        this.errorMsg.set('Не удалось создать бронирование');
       }
     });
   }
 
   onDelete(): void {
-    if (!this.property) return;
+    const p = this.property();
+    if (!p) return;
     if (!confirm('Удалить это объявление?')) return;
 
-    this.propertyService.delete(this.property.id).subscribe({
-      next: () => {
-        this.router.navigate(['/properties']);
-      },
-      error: () => {
-        this.errorMsg = 'Не удалось удалить объявление';
-      }
+    this.propertyService.delete(p.id).subscribe({
+      next: () => this.router.navigate(['/properties']),
+      error: () => this.errorMsg.set('Не удалось удалить объявление')
     });
   }
 
@@ -94,7 +88,15 @@ export class PropertyDetail implements OnInit {
     return this.authService.isLoggedIn();
   }
 
-  getImage(): string {
-    return `https://picsum.photos/seed/${this.property?.id}/800/400`;
+  getGradient(): string {
+    const colors = [
+      'linear-gradient(135deg, #FF385C, #ff6b35)',
+      'linear-gradient(135deg, #6C63FF, #3ecfcf)',
+      'linear-gradient(135deg, #f093fb, #f5576c)',
+      'linear-gradient(135deg, #4facfe, #00f2fe)',
+      'linear-gradient(135deg, #43e97b, #38f9d7)',
+      'linear-gradient(135deg, #fa709a, #fee140)',
+    ];
+    return colors[(this.property()?.id ?? 0) % colors.length];
   }
 }

@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IUser } from '../interfaces/user.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +14,7 @@ export class AuthService {
     return this.http.post<{ token: string }>(`${this.apiUrl}/auth/login/`, credentials);
   }
 
-  register(data: Partial<IUser>): Observable<any> {
+  register(data: { username: string; email: string; password: string; password2: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/auth/register/`, data);
   }
 
