@@ -10,4 +10,8 @@ urlpatterns = [
     # Properties (CBV)
     path('properties/', views.PropertyListCreateView.as_view(), name='property-list'),
     path('properties/<int:pk>/', views.PropertyDetailView.as_view(), name='property-detail'),
+
+    # Bookings (CBV)
+    path('bookings/', views.BookingListCreateView.as_view(), name='booking-list'),
+    path('bookings/<int:pk>/', views.BookingDetailView.as_view(), name='booking-detail'),
 ]

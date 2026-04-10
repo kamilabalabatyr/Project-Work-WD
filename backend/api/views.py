@@ -5,8 +5,8 @@ from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 
-from .models import Property
-from .serializers import RegisterSerializer, LoginSerializer, PropertyModelSerializer
+from .models import Property, Booking
+from .serializers import RegisterSerializer, LoginSerializer, PropertyModelSerializer, BookingModelSerializer
 from .permissions import IsOwnerOrReadOnly
 
 
@@ -71,10 +71,35 @@ class PropertyListCreateView(generics.ListCreateAPIView):
         serializer.save(owner=self.request.user)
 
 
-#  
+#
 # CBV #2 — Property Detail / Update / Delete
-#  
+#
 class PropertyDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Property.objects.all()
     serializer_class = PropertyModelSerializer
     permission_classes = [IsAuthenticatedOrReadOnly, IsOwnerOrReadOnly]
+
+
+#
+# CBV #3 — Booking List / Create
+#
+class BookingListCreateView(generics.ListCreateAPIView):
+    serializer_class = BookingModelSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Booking.objects.filter(guest=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(guest=self.request.user)
+
+
+#
+# CBV #4 — Booking Detail
+#
+class BookingDetailView(generics.RetrieveAPIView):
+    serializer_class = BookingModelSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Booking.objects.filter(guest=self.request.user)
