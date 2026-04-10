@@ -42,7 +42,7 @@
       <div class="grid">
         @for (property of properties(); track property.id) {
           <a class="card" [routerLink]="['/properties', property.id]">
-            <div class="card-img" [style.background]="getGradient(property)"></div>
+            <img [src]="getImage(property)" [alt]="property.title" class="card-img" />
             <div class="card-body">
               <div class="card-city">📍 {{ property.city }}</div>
               <h3>{{ property.title }}</h3>

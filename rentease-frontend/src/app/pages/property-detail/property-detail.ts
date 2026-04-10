@@ -88,15 +88,7 @@ export class PropertyDetail implements OnInit {
     return this.authService.isLoggedIn();
   }
 
-  getGradient(): string {
-    const colors = [
-      'linear-gradient(135deg, #FF385C, #ff6b35)',
-      'linear-gradient(135deg, #6C63FF, #3ecfcf)',
-      'linear-gradient(135deg, #f093fb, #f5576c)',
-      'linear-gradient(135deg, #4facfe, #00f2fe)',
-      'linear-gradient(135deg, #43e97b, #38f9d7)',
-      'linear-gradient(135deg, #fa709a, #fee140)',
-    ];
-    return colors[(this.property()?.id ?? 0) % colors.length];
+  getImage(): string {
+    return `https://picsum.photos/seed/${this.property()?.id}/800/400`;
   }
 }

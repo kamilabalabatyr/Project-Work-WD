@@ -35,7 +35,7 @@
       <div class="detail-layout">
 
         <div class="detail-info">
-          <div class="detail-img" [style.background]="getGradient()"></div>
+          <img [src]="getImage()" [alt]="property()!.title" class="detail-img" />
 
           <div class="detail-body">
             <div class="detail-city">📍 {{ property()!.city }}</div>
