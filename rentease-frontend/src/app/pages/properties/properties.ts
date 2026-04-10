@@ -22,7 +22,13 @@ export class Properties implements OnInit {
   filterMaxPrice = signal<number | null>(null);
 
   showAddForm = signal(false);
-  newProperty = signal({ title: '', price_per_night: undefined as number | undefined, city: '' });
+  newProperty = signal({
+    title: '',
+    description: '',
+    city: '',
+    price_per_night: undefined as number | undefined,
+    max_guests: undefined as number | undefined,
+  });
 
   constructor(
     private propertyService: PropertyService,
@@ -68,14 +74,14 @@ export class Properties implements OnInit {
 
   onAddProperty(): void {
     const p = this.newProperty();
-    if (!p.title || !p.city || !p.price_per_night) return;
+    if (!p.title || !p.description || !p.city || !p.price_per_night || !p.max_guests) return;
 
     this.propertyService.create(p).subscribe({
       next: (created) => {
         this.properties.update(list => [created, ...list]);
         this.filteredProperties.update(list => [created, ...list]);
         this.showAddForm.set(false);
-        this.newProperty.set({ title: '', price_per_night: undefined, city: '' });
+        this.newProperty.set({ title: '', description: '', city: '', price_per_night: undefined, max_guests: undefined });
       },
       error: () => {
         this.errorMsg.set('Не удалось создать объявление');

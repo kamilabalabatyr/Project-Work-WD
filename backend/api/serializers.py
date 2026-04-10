@@ -51,16 +51,22 @@ class PropertyModelSerializer(serializers.ModelSerializer):
 
 class BookingModelSerializer(serializers.ModelSerializer):
     guest = serializers.ReadOnlyField(source='guest.username')
+    total_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:
         model = Booking
         fields = ['id', 'property', 'guest', 'check_in', 'check_out', 'guests_count', 'total_price', 'created_at']
-        read_only_fields = ['guest', 'created_at']
+        read_only_fields = ['guest', 'total_price', 'created_at']
 
     def validate(self, data):
         if data['check_out'] <= data['check_in']:
             raise serializers.ValidationError({'check_out': 'Check-out must be after check-in.'})
         return data
+
+    def create(self, validated_data):
+        nights = (validated_data['check_out'] - validated_data['check_in']).days
+        validated_data['total_price'] = validated_data['property'].price_per_night * nights
+        return super().create(validated_data)
 
 
 class ReviewSerializer(serializers.ModelSerializer):

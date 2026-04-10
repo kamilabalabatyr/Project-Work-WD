@@ -57,6 +57,25 @@
               min="1"
             />
           </div>
+          <div class="field">
+            <label>Макс. гостей</label>
+            <input
+              type="number"
+              [value]="newProperty().max_guests"
+              (input)="newProperty.update(p => ({...p, max_guests: +$any($event.target).value}))"
+              placeholder="4"
+              min="1"
+            />
+          </div>
+        </div>
+        <div class="field">
+          <label>Описание</label>
+          <textarea
+            [value]="newProperty().description"
+            (input)="newProperty.update(p => ({...p, description: $any($event.target).value}))"
+            placeholder="Опишите ваш объект..."
+            rows="3"
+          ></textarea>
         </div>
         <button class="btn-primary" (click)="onAddProperty()">Опубликовать</button>
       </div>

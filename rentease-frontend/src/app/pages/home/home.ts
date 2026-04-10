@@ -46,15 +46,7 @@ export class Home implements OnInit {
     });
   }
 
-  getGradient(property: IProperty): string {
-    const colors = [
-      'linear-gradient(135deg, #FF385C, #ff6b35)',
-      'linear-gradient(135deg, #6C63FF, #3ecfcf)',
-      'linear-gradient(135deg, #f093fb, #f5576c)',
-      'linear-gradient(135deg, #4facfe, #00f2fe)',
-      'linear-gradient(135deg, #43e97b, #38f9d7)',
-      'linear-gradient(135deg, #fa709a, #fee140)',
-    ];
-    return colors[property.id % colors.length];
+  getImage(property: IProperty): string {
+    return `https://picsum.photos/seed/${property.id}/400/260`;
   }
 }
