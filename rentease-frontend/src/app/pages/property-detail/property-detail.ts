@@ -5,6 +5,7 @@ import { PropertyService } from '../../services/property.service';
 import { BookingService } from '../../services/booking.service';
 import { AuthService } from '../../services/auth.service';
 import { IProperty } from '../../interfaces/property.interface';
+import { getPropertyImageUrl } from '../../utils/property-image.utils';
 
 @Component({
   selector: 'app-property-detail',
@@ -89,6 +90,7 @@ export class PropertyDetail implements OnInit {
   }
 
   getImage(): string {
-    return `https://picsum.photos/seed/${this.property()?.id}/800/400`;
+    const id = this.property()?.id ?? 0;
+    return getPropertyImageUrl(id, 800, 400);
   }
 }

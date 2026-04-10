@@ -4,6 +4,7 @@ import { RouterModule } from '@angular/router';
 import { PropertyService } from '../../services/property.service';
 import { AuthService } from '../../services/auth.service';
 import { IProperty } from '../../interfaces/property.interface';
+import { getPropertyImageUrl } from '../../utils/property-image.utils';
 
 @Component({
   selector: 'app-properties',
@@ -94,6 +95,6 @@ export class Properties implements OnInit {
   }
 
   getImage(property: IProperty): string {
-    return `https://picsum.photos/seed/${property.id}/400/260`;
+    return getPropertyImageUrl(property.id, 400, 260);
   }
 }
