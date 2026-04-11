@@ -100,3 +100,19 @@
   </main>
 
 </div>
+
+@if (confirmCancelId() !== null) {
+  <div class="modal-overlay" (click)="dismissCancel()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-icon">
+        <i class="ci-Close_MD"></i>
+      </div>
+      <h2 class="modal-title">Отменить бронирование?</h2>
+      <p class="modal-text">Это действие необратимо. Бронирование будет отменено, и выбранные даты освободятся.</p>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn--keep" (click)="dismissCancel()">Оставить</button>
+        <button class="modal-btn modal-btn--cancel" (click)="confirmCancel()">Да, отменить</button>
+      </div>
+    </div>
+  </div>
+}

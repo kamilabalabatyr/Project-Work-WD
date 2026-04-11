@@ -20,6 +20,7 @@ export class MyBookings implements OnInit {
   isLoading = signal(true);
   errorMsg = signal('');
   cancellingIds = signal<Set<number>>(new Set());
+  confirmCancelId = signal<number | null>(null);
 
   constructor(
     private bookingService: BookingService,
@@ -65,7 +66,13 @@ export class MyBookings implements OnInit {
   }
 
   cancelBooking(id: number): void {
-    if (!confirm('Отменить бронирование?')) return;
+    this.confirmCancelId.set(id);
+  }
+
+  confirmCancel(): void {
+    const id = this.confirmCancelId();
+    if (id === null) return;
+    this.confirmCancelId.set(null);
     this.cancellingIds.update(s => new Set(s).add(id));
     this.bookingService.cancel(id).subscribe({
       next: () => {
@@ -74,8 +81,11 @@ export class MyBookings implements OnInit {
       },
       error: () => {
         this.cancellingIds.update(s => { const ns = new Set(s); ns.delete(id); return ns; });
-        alert('Не удалось отменить бронирование');
       }
     });
+  }
+
+  dismissCancel(): void {
+    this.confirmCancelId.set(null);
   }
 }
