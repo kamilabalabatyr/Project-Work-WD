@@ -51,7 +51,9 @@
                     <span class="property-city"><i class="ci-Location"></i> {{ getProperty(booking.property)?.city }}</span>
                   }
                 </div>
-                <span class="booking-badge">Бронь #{{ booking.id }}</span>
+                    <a [routerLink]="['/properties', booking.property]" class="btn-link">
+                    Смотреть <i class="ci-Arrow_Right_MD"></i>
+                  </a>
               </div>
 
               <div class="card-details">
@@ -87,9 +89,6 @@
                     }
                     Отменить
                   </button>
-                  <a [routerLink]="['/properties', booking.property]" class="btn-link">
-                    Смотреть <i class="ci-Arrow_Right_MD"></i>
-                  </a>
                 </div>
               </div>
             </div>
