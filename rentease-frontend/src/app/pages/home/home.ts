@@ -21,7 +21,7 @@ export class Home implements OnInit {
   ngOnInit(): void {
     this.propertyService.getAll().subscribe({
       next: (res) => {
-        this.properties.set(res.results.slice(0, 6));
+        this.properties.set(res.results.slice(0, 3));
         this.isLoading.set(false);
       },
       error: () => {
