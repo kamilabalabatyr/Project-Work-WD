@@ -1,6 +1,9 @@
+from datetime import date
+
 from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+
 from .models import Property, Booking, Review
 
 
@@ -59,8 +62,36 @@ class BookingModelSerializer(serializers.ModelSerializer):
         read_only_fields = ['guest', 'total_price', 'created_at']
 
     def validate(self, data):
-        if data['check_out'] <= data['check_in']:
+        check_in = data['check_in']
+        check_out = data['check_out']
+        prop = data['property']
+
+        if check_out <= check_in:
             raise serializers.ValidationError({'check_out': 'Check-out must be after check-in.'})
+
+        if check_in < date.today():
+            raise serializers.ValidationError({'check_in': 'Check-in date cannot be in the past.'})
+
+        if data['guests_count'] < 1:
+            raise serializers.ValidationError({'guests_count': 'At least 1 guest is required.'})
+
+        if data['guests_count'] > prop.max_guests:
+            raise serializers.ValidationError({
+                'guests_count': f'Maximum {prop.max_guests} guests allowed for this property.'
+            })
+
+        overlapping = Booking.objects.filter(
+            property=prop,
+            check_in__lt=check_out,
+            check_out__gt=check_in,
+        )
+        if self.instance:
+            overlapping = overlapping.exclude(pk=self.instance.pk)
+        if overlapping.exists():
+            raise serializers.ValidationError(
+                'This property is already booked for the selected dates.'
+            )
+
         return data
 
     def create(self, validated_data):

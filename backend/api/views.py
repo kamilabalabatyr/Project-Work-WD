@@ -1,13 +1,13 @@
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework import status, generics
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
 
 from .models import Property, Booking
 from .serializers import RegisterSerializer, LoginSerializer, PropertyModelSerializer, BookingModelSerializer
 from .permissions import IsOwnerOrReadOnly
+from .throttles import AuthRateThrottle
 
 
 #  
@@ -15,6 +15,7 @@ from .permissions import IsOwnerOrReadOnly
 #  
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@throttle_classes([AuthRateThrottle])
 def register_view(request):
     serializer = RegisterSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
@@ -32,15 +33,11 @@ def register_view(request):
 #  
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@throttle_classes([AuthRateThrottle])
 def login_view(request):
     serializer = LoginSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    user = authenticate(
-        username=serializer.validated_data['username'],
-        password=serializer.validated_data['password'],
-    )
-    if user is None:
-        return Response({'error': 'Invalid credentials.'}, status=status.HTTP_401_UNAUTHORIZED)
+    user = serializer.validated_data['user']
     token, _ = Token.objects.get_or_create(user=user)
     return Response({
         'token': token.key,
@@ -55,7 +52,10 @@ def login_view(request):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def logout_view(request):
-    request.user.auth_token.delete()
+    try:
+        request.user.auth_token.delete()
+    except Exception:
+        pass
     return Response({'detail': 'Logged out.'}, status=status.HTTP_200_OK)
 
 
@@ -88,7 +88,9 @@ class BookingListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Booking.objects.filter(guest=self.request.user)
+        return Booking.objects.select_related('property', 'guest').filter(
+            guest=self.request.user
+        )
 
     def perform_create(self, serializer):
         serializer.save(guest=self.request.user)
@@ -102,4 +104,6 @@ class BookingDetailView(generics.RetrieveDestroyAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Booking.objects.filter(guest=self.request.user)
+        return Booking.objects.select_related('property', 'guest').filter(
+            guest=self.request.user
+        )
