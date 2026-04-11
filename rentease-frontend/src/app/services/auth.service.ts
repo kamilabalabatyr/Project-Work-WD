@@ -2,6 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface LoginResponse {
+  token: string;
+  user_id: number;
+  username: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -10,8 +16,8 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  login(credentials: { username: string; password: string }): Observable<{ token: string }> {
-    return this.http.post<{ token: string }>(`${this.apiUrl}/auth/login/`, credentials);
+  login(credentials: { username: string; password: string }): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login/`, credentials);
   }
 
   register(data: { username: string; email: string; password: string; password2: string }): Observable<any> {
@@ -30,11 +36,21 @@ export class AuthService {
     return localStorage.getItem('token');
   }
 
+  getUsername(): string | null {
+    return localStorage.getItem('username');
+  }
+
+  saveSession(res: LoginResponse): void {
+    localStorage.setItem('token', res.token);
+    localStorage.setItem('username', res.username);
+  }
+
   saveToken(token: string): void {
     localStorage.setItem('token', token);
   }
 
   clearToken(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('username');
   }
 }

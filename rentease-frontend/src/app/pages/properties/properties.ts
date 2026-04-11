@@ -43,9 +43,9 @@ export class Properties implements OnInit {
   loadProperties(): void {
     this.isLoading.set(true);
     this.propertyService.getAll().subscribe({
-      next: (data) => {
-        this.properties.set(data);
-        this.filteredProperties.set(data);
+      next: (res) => {
+        this.properties.set(res.results);
+        this.filteredProperties.set(res.results);
         this.isLoading.set(false);
       },
       error: () => {

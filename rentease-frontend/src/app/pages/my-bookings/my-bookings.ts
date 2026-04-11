@@ -34,7 +34,7 @@ export class MyBookings implements OnInit {
       next: ({ bookings, properties }) => {
         this.bookings.set(bookings);
         const map = new Map<number, IProperty>();
-        properties.forEach(p => map.set(p.id, p));
+        properties.results.forEach(p => map.set(p.id, p));
         this.propertiesMap.set(map);
         this.isLoading.set(false);
       },

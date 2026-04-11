@@ -64,8 +64,9 @@ export class PropertyDetail implements OnInit {
         this.booking.set({ check_in: '', check_out: '', guests_count: 1 });
         this.errorMsg.set('');
       },
-      error: () => {
-        this.errorMsg.set('Не удалось создать бронирование');
+      error: (err) => {
+        const msg = this.extractError(err);
+        this.errorMsg.set(msg || 'Не удалось создать бронирование');
       }
     });
   }
@@ -86,11 +87,26 @@ export class PropertyDetail implements OnInit {
   }
 
   isOwner(): boolean {
-    return this.authService.isLoggedIn();
+    const p = this.property();
+    if (!p || !this.authService.isLoggedIn()) return false;
+    return p.owner === this.authService.getUsername();
   }
 
   getImage(): string {
     const id = this.property()?.id ?? 0;
     return getPropertyImageUrl(id, 800, 400);
+  }
+
+  private extractError(err: any): string {
+    if (!err?.error) return '';
+    const e = err.error;
+    if (typeof e === 'string') return e;
+    if (Array.isArray(e)) return e[0];
+    const values = Object.values(e);
+    for (const v of values) {
+      if (typeof v === 'string') return v;
+      if (Array.isArray(v) && v.length) return v[0];
+    }
+    return '';
   }
 }

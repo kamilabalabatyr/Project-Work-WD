@@ -33,8 +33,8 @@ export class Login {
     this.fieldErrors.set({});
 
     this.authService.login(this.credentials()).subscribe({
-      next: (res: { token: string }) => {
-        this.authService.saveToken(res.token);
+      next: (res) => {
+        this.authService.saveSession(res);
         this.isLoading.set(false);
         this.router.navigate(['/']);
       },

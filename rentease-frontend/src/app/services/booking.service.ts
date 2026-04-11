@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { IBooking } from '../interfaces/booking.interface';
+import { PaginatedResponse } from './property.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,9 @@ export class BookingService {
   }
 
   getMyBookings(): Observable<IBooking[]> {
-    return this.http.get<IBooking[]>(`${this.apiUrl}/bookings/`);
+    return this.http.get<PaginatedResponse<IBooking>>(`${this.apiUrl}/bookings/`).pipe(
+      map(res => res.results)
+    );
   }
 
   cancel(id: number): Observable<void> {

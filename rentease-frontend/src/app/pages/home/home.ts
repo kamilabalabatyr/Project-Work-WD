@@ -1,15 +1,13 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PropertyService } from '../../services/property.service';
-import { AuthService } from '../../services/auth.service';
 import { IProperty } from '../../interfaces/property.interface';
 import { getPropertyImageUrl } from '../../utils/property-image.utils';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [FormsModule, RouterModule],
+  imports: [RouterModule],
   templateUrl: './home.html',
   styleUrl: './home.scss'
 })
@@ -18,32 +16,18 @@ export class Home implements OnInit {
   isLoading = signal(true);
   errorMsg = signal('');
 
-  constructor(
-    private propertyService: PropertyService,
-    private authService: AuthService
-  ) {}
+  constructor(private propertyService: PropertyService) {}
 
   ngOnInit(): void {
     this.propertyService.getAll().subscribe({
-      next: (data) => {
-        this.properties.set(data.slice(0, 6));
+      next: (res) => {
+        this.properties.set(res.results.slice(0, 6));
         this.isLoading.set(false);
       },
       error: () => {
         this.errorMsg.set('Не удалось загрузить объекты');
         this.isLoading.set(false);
       }
-    });
-  }
-
-  isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
-  }
-
-  logout(): void {
-    this.authService.logout().subscribe({
-      next: () => this.authService.clearToken(),
-      error: () => this.authService.clearToken()
     });
   }
 

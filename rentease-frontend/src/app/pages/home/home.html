@@ -1,21 +1,5 @@
 <div class="page-wrapper">
 
-  <header class="navbar">
-    <a class="logo" routerLink="/"><img src="/logo.png" alt="RentEase" height="28"> RentEase</a>
-    <nav>
-      <a routerLink="/properties">Все объекты</a>
-      @if (isLoggedIn()) {
-        <a routerLink="/my-bookings">Мои брони</a>
-      }
-      @if (!isLoggedIn()) {
-        <a routerLink="/login" class="btn-nav">Войти</a>
-      }
-      @if (isLoggedIn()) {
-        <button class="btn-nav" (click)="logout()">Выйти</button>
-      }
-    </nav>
-  </header>
-
   <section class="hero">
     <h1>Найди жильё своей мечты</h1>
     <p>Аренда квартир и домов по всему миру</p>
@@ -64,9 +48,5 @@
     }
 
   </main>
-
-  <footer class="footer">
-    <p>© 2026 RentEase</p>
-  </footer>
 
 </div>
