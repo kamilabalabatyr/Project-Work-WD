@@ -11,6 +11,10 @@ urlpatterns = [
     path('properties/', views.PropertyListCreateView.as_view(), name='property-list'),
     path('properties/<int:pk>/', views.PropertyDetailView.as_view(), name='property-detail'),
 
+    # Admin — approval workflow (FBV)
+    path('admin/properties/pending/', views.pending_properties_view, name='pending-properties'),
+    path('admin/properties/<int:pk>/approval/', views.property_approval_view, name='property-approval'),
+
     # Bookings (CBV)
     path('bookings/', views.BookingListCreateView.as_view(), name='booking-list'),
     path('bookings/<int:pk>/', views.BookingDetailView.as_view(), name='booking-detail'),

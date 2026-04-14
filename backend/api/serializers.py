@@ -4,8 +4,7 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
-from .models import Property, Booking, Review
-
+from .models import Property, Booking, Review, UserProfile
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -13,6 +12,7 @@ class RegisterSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
+    role = serializers.ChoiceField(choices=['guest', 'landlord'], default='guest')
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
@@ -25,8 +25,10 @@ class RegisterSerializer(serializers.Serializer):
         return data
 
     def create(self, validated_data):
+        role = validated_data.pop('role', 'guest')
         validated_data.pop('password2')
         user = User.objects.create_user(**validated_data)
+        UserProfile.objects.create(user=user, role=role)
         return user
 
 
@@ -44,12 +46,25 @@ class LoginSerializer(serializers.Serializer):
 
 class PropertyModelSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
+    status = serializers.ReadOnlyField()
 
     class Meta:
         model = Property
         fields = ['id', 'title', 'description', 'city', 'price_per_night',
-                  'max_guests', 'owner', 'created_at']
-        read_only_fields = ['owner', 'created_at']
+                  'max_guests', 'owner', 'status', 'rejection_reason', 'created_at']
+        read_only_fields = ['owner', 'status', 'rejection_reason', 'created_at']
+
+
+class PropertyApprovalSerializer(serializers.Serializer):
+    action = serializers.ChoiceField(choices=['approve', 'reject'])
+    rejection_reason = serializers.CharField(required=False, default='')
+
+    def validate(self, data):
+        if data['action'] == 'reject' and not data.get('rejection_reason'):
+            raise serializers.ValidationError(
+                {'rejection_reason': 'Rejection reason is required when rejecting.'}
+            )
+        return data
 
 
 class BookingModelSerializer(serializers.ModelSerializer):
@@ -80,6 +95,11 @@ class BookingModelSerializer(serializers.ModelSerializer):
                 'guests_count': f'Maximum {prop.max_guests} guests allowed for this property.'
             })
 
+        # Only allow booking approved properties
+        if prop.status != 'approved':
+            raise serializers.ValidationError('This property is not available for booking.')
+
+        # Date collision check — prevent overbooking
         overlapping = Booking.objects.filter(
             property=prop,
             check_in__lt=check_out,

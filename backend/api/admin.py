@@ -1,12 +1,20 @@
 from django.contrib import admin
-from .models import Property, Booking, Review
+from .models import Property, Booking, Review, UserProfile
+
+
+@admin.register(UserProfile)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'role')
+    list_filter = ('role',)
+    search_fields = ('user__username',)
 
 
 @admin.register(Property)
 class PropertyAdmin(admin.ModelAdmin):
-    list_display = ('title', 'city', 'price_per_night', 'owner', 'created_at')
-    list_filter = ('city',)
+    list_display = ('title', 'city', 'price_per_night', 'owner', 'status', 'created_at')
+    list_filter = ('status', 'city')
     search_fields = ('title', 'city')
+    list_editable = ('status',)
 
 
 @admin.register(Booking)

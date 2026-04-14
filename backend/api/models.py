@@ -2,13 +2,33 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class UserProfile(models.Model):
+    ROLE_CHOICES = [
+        ('guest', 'Guest'),
+        ('landlord', 'Landlord'),
+        ('admin', 'Admin'),
+    ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='guest')
+
+    def __str__(self):
+        return f'{self.user.username} ({self.role})'
+
+
 class Property(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending Approval'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
     owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='properties')
     title = models.CharField(max_length=200)
     description = models.TextField()
     city = models.CharField(max_length=100)
     price_per_night = models.DecimalField(max_digits=8, decimal_places=2)
     max_guests = models.IntegerField()
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    rejection_reason = models.TextField(blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -16,7 +36,7 @@ class Property(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f'{self.title} — {self.city}'
+        return f'{self.title} — {self.city} [{self.status}]'
 
 
 class Booking(models.Model):
