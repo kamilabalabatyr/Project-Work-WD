@@ -3,6 +3,45 @@
 
 ---
 
+## 🔥 Доработки после 1-го ревью (Саша )
+
+### Роли пользователей
+- [+] Модель **`UserProfile`** — OneToOneField к User, поле `role` (guest / landlord / admin)
+- [+] При регистрации пользователь выбирает роль (`guest` или `landlord`)
+- [+] Login возвращает `role` в ответе
+- [+] Кастомные пермишены: `IsLandlord`, `IsAdmin`
+
+### Approval Workflow для объявлений
+- [+] Поле `status` в Property: `pending` → `approved` / `rejected`
+- [+] Поле `rejection_reason` для объяснения отказа
+- [+] Арендодатель создаёт объявление → статус `pending`
+- [+] Только арендодатели (`landlord`) могут создавать объявления
+- [+] Гости (`guest`) получают 403 при попытке создать объявление
+- [+] Публичный список показывает только `approved` объекты
+- [+] Арендодатель видит свои объекты любого статуса + все `approved`
+- [+] Админ видит все объекты
+- [+] `GET /api/admin/properties/pending/` — список ожидающих (только admin)
+- [+] `POST /api/admin/properties/<pk>/approval/` — approve/reject (только admin)
+
+### Логика коллизии дат (антиовербукинг)
+- [+] Валидация пересечения дат бронирования на бэкенде
+- [+] `check_in__lt=check_out AND check_out__gt=check_in` — классический overlap-запрос
+- [+] Нельзя забронировать уже занятые даты → 400 с сообщением
+- [+] Смежные даты разрешены (выезд = заезд следующего)
+- [+] Бронирование возможно только для `approved` объектов
+
+### Безопасность и качество кода (из code review)
+- [+] SECRET_KEY и DEBUG из переменных окружения (.env)
+- [+] DEFAULT_PERMISSION = IsAuthenticated (вместо AllowAny)
+- [+] Rate limiting: auth 5/min, anon 30/min, user 100/min
+- [+] Пагинация (PAGE_SIZE=20)
+- [+] select_related для N+1 запросов
+- [+] Logout с try/except (не падает при двойном вызове)
+- [+] Убран двойной authenticate() в login_view
+- [+] .dockerignore, docker-compose env_file
+
+---
+
 ## 👥 Команда и роли
 
 | Имя | Роль | Стек | Зона ответственности |
