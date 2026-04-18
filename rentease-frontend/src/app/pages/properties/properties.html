@@ -5,75 +5,102 @@
       <h1>Все объекты</h1>
     </div>
 
-    <!-- filters -->
-    <div class="filters">
-      <div class="field">
-        <label>Город</label>
-        <input
-          type="text"
-          [value]="filterCity()"
-          (input)="filterCity.set($any($event.target).value); applyFilters()"
-          placeholder="Поиск по городу..."
-        />
-      </div>
-      <div class="field">
-        <label>Макс. цена ($)</label>
-        <input
-          type="number"
-          [value]="filterMaxPrice()"
-          (input)="filterMaxPrice.set(+$any($event.target).value || null); applyFilters()"
-          placeholder="100"
-          min="0"
-        />
-      </div>
-      <button class="btn-clear" (click)="clearFilters()">Сбросить</button>
-    </div>
+    <div class="page-layout">
 
-    <!-- loading -->
-    @if (isLoading()) {
-      <div class="state">
-        <div class="spinner"></div>
-        <p>Загружаем...</p>
-      </div>
-    }
+      <!-- content: loading / error / grid -->
+      <div class="content">
 
-    <!-- error -->
-    @if (!isLoading() && errorMsg()) {
-      <div class="state error">
-        <p>{{ errorMsg() }}</p>
-      </div>
-    }
-
-    <!-- empty -->
-    @if (!isLoading() && !errorMsg() && filteredProperties().length === 0) {
-      <div class="state">
-        <p>🔍 Ничего не найдено. Попробуйте изменить фильтры.</p>
-        <button class="btn-clear" (click)="clearFilters()">Сбросить фильтры</button>
-      </div>
-    }
-
-    <!-- grid -->
-    @if (!isLoading() && !errorMsg() && filteredProperties().length > 0) {
-      <p class="count">Найдено: {{ filteredProperties().length }}</p>
-      <div class="grid">
-        @for (property of filteredProperties(); track property.id) {
-          <a class="card" [routerLink]="['/properties', property.id]">
-            <img [src]="getImage(property)" [alt]="property.title" class="card-img" />
-            <div class="card-body">
-              <div class="card-city"><i class="ci-Map_Pin"></i> {{ property.city }}</div>
-              <h3>{{ property.title }}</h3>
-              <div class="card-footer">
-                <span class="price">
-                  ${{ property.price_per_night }}
-                  <span>/ ночь</span>
-                </span>
-                <span class="cta">Подробнее <i class="ci-Arrow_Right_MD"></i></span>
-              </div>
-            </div>
-          </a>
+        @if (isLoading()) {
+          <div class="state">
+            <div class="spinner"></div>
+            <p>Загружаем...</p>
+          </div>
         }
+
+        @if (!isLoading() && errorMsg()) {
+          <div class="state error">
+            <p>{{ errorMsg() }}</p>
+          </div>
+        }
+
+        @if (!isLoading() && !errorMsg() && filteredProperties().length === 0) {
+          <div class="state">
+            <p>🔍 Ничего не найдено. Попробуйте изменить фильтры.</p>
+            <button class="btn-clear" (click)="clearFilters()">Сбросить фильтры</button>
+          </div>
+        }
+
+        @if (!isLoading() && !errorMsg() && filteredProperties().length > 0) {
+          <p class="count">Найдено: {{ filteredProperties().length }}</p>
+          <div class="grid">
+            @for (property of filteredProperties(); track property.id) {
+              <a class="card" [routerLink]="['/properties', property.id]">
+                <img [src]="getImage(property)" [alt]="property.title" class="card-img" />
+                <div class="card-body">
+                  <div class="card-city"><i class="ci-Map_Pin"></i> {{ property.city }}</div>
+                  <h3>{{ property.title }}</h3>
+                  <div class="card-footer">
+                    <span class="price">
+                      ${{ property.price_per_night }}
+                      <span>/ ночь</span>
+                    </span>
+                    <span class="guests-badge">
+                      <i class="ci-User"></i> до {{ property.max_guests }}
+                    </span>
+                    <span class="cta">Подробнее <i class="ci-Arrow_Right_MD"></i></span>
+                  </div>
+                </div>
+              </a>
+            }
+          </div>
+        }
+
       </div>
-    }
+
+      <!-- filter card (right sidebar) -->
+      <aside class="filter-card">
+        <h3>Фильтры</h3>
+
+        <div class="filter-form">
+          <div class="field">
+            <label>Город</label>
+            <select
+              [value]="filterCity()"
+              (change)="filterCity.set($any($event.target).value); applyFilters()"
+            >
+              <option value="">Все города</option>
+              @for (city of availableCities(); track city) {
+                <option [value]="city">{{ city }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Количество гостей</label>
+            <input
+              type="number"
+              [value]="filterGuests()"
+              (input)="filterGuests.set(+$any($event.target).value || 1); applyFilters()"
+              min="1"
+            />
+          </div>
+
+          <div class="field">
+            <label>Макс. цена ($)</label>
+            <input
+              type="number"
+              [value]="filterMaxPrice()"
+              (input)="filterMaxPrice.set(+$any($event.target).value || null); applyFilters()"
+              placeholder="Без ограничения"
+              min="0"
+            />
+          </div>
+
+          <button class="btn-clear" (click)="clearFilters()">Сбросить фильтры</button>
+        </div>
+      </aside>
+
+    </div>
 
   </main>
 
