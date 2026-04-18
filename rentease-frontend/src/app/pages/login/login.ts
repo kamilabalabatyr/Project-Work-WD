@@ -17,7 +17,7 @@ export class Login {
   fieldErrors = signal<Record<string, string[]>>({});
 
   credentials = signal({ username: '', password: '' });
-  registerData = signal({ username: '', email: '', password: '', password2: '' });
+  registerData = signal({ username: '', email: '', password: '', password2: '', role: 'guest' });
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -25,6 +25,10 @@ export class Login {
     this.isLoginMode.update(v => !v);
     this.errorMsg.set('');
     this.fieldErrors.set({});
+  }
+
+  setRole(role: 'guest' | 'landlord') {
+    this.registerData.update(r => ({ ...r, role }));
   }
 
   onLogin() {
@@ -36,7 +40,7 @@ export class Login {
       next: (res) => {
         this.authService.saveSession(res);
         this.isLoading.set(false);
-        this.router.navigate(['/']);
+        this.router.navigate([res.role === 'landlord' ? '/extranet' : '/']);
       },
       error: (err) => {
         const errors = this.parseErrors(err);
@@ -53,9 +57,10 @@ export class Login {
     this.fieldErrors.set({});
 
     this.authService.register(this.registerData()).subscribe({
-      next: () => {
+      next: (res) => {
+        this.authService.saveSession(res);
         this.isLoading.set(false);
-        this.isLoginMode.set(true);
+        this.router.navigate([res.role === 'landlord' ? '/extranet' : '/']);
       },
       error: (err) => {
         const errors = this.parseErrors(err);

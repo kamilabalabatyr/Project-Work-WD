@@ -6,6 +6,7 @@ export interface LoginResponse {
   token: string;
   user_id: number;
   username: string;
+  role: string;
 }
 
 @Injectable({
@@ -20,8 +21,8 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/auth/login/`, credentials);
   }
 
-  register(data: { username: string; email: string; password: string; password2: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/register/`, data);
+  register(data: { username: string; email: string; password: string; password2: string; role: string }): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/auth/register/`, data);
   }
 
   logout(): Observable<any> {
@@ -40,17 +41,23 @@ export class AuthService {
     return localStorage.getItem('username');
   }
 
+  getRole(): string {
+    return localStorage.getItem('role') ?? 'guest';
+  }
+
+  isLandlord(): boolean {
+    return this.getRole() === 'landlord';
+  }
+
   saveSession(res: LoginResponse): void {
     localStorage.setItem('token', res.token);
     localStorage.setItem('username', res.username);
-  }
-
-  saveToken(token: string): void {
-    localStorage.setItem('token', token);
+    localStorage.setItem('role', res.role);
   }
 
   clearToken(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    localStorage.removeItem('role');
   }
 }

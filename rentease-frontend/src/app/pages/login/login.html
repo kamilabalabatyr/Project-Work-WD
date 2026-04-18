@@ -39,6 +39,33 @@
       </form>
     } @else {
       <form (ngSubmit)="onRegister()">
+
+        <div class="role-selector">
+          <label class="role-selector__label">Я регистрируюсь как</label>
+          <div class="role-selector__options">
+            <button
+              type="button"
+              class="role-option"
+              [class.active]="registerData().role === 'guest'"
+              (click)="setRole('guest')"
+            >
+              <i class="ci-User_01"></i>
+              <span>Арендатор</span>
+              <small>Снимаю жильё</small>
+            </button>
+            <button
+              type="button"
+              class="role-option"
+              [class.active]="registerData().role === 'landlord'"
+              (click)="setRole('landlord')"
+            >
+              <i class="ci-House_01"></i>
+              <span>Арендодатель</span>
+              <small>Сдаю жильё</small>
+            </button>
+          </div>
+        </div>
+
         <div class="field">
           <label>Имя пользователя</label>
           <input
