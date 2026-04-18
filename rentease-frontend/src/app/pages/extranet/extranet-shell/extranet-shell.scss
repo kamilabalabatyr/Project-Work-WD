@@ -1,0 +1,123 @@
+.extranet-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #f7f7f7;
+}
+
+.sidebar {
+  width: 240px;
+  min-height: 100vh;
+  background: white;
+  border-right: 1px solid #ebebeb;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+
+  &__header {
+    padding: 20px 20px 16px;
+    border-bottom: 1px solid #ebebeb;
+  }
+
+  &__logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #FF385C;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  &__nav {
+    flex: 1;
+    padding: 16px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #444;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.15s, color 0.15s;
+
+    i {
+      font-size: 18px;
+      color: #717171;
+      transition: color 0.15s;
+    }
+
+    &:hover {
+      background: #f7f7f7;
+      color: #222;
+
+      i { color: #222; }
+    }
+
+    &.active {
+      background: #fff0f3;
+      color: #FF385C;
+      font-weight: 600;
+
+      i { color: #FF385C; }
+    }
+  }
+
+  &__footer {
+    padding: 16px 12px;
+    border-top: 1px solid #ebebeb;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #717171;
+    font-weight: 500;
+
+    i { font-size: 18px; }
+  }
+
+  &__logout {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: #717171;
+    width: 100%;
+    transition: background 0.15s, color 0.15s;
+
+    i { font-size: 18px; }
+
+    &:hover {
+      background: #f7f7f7;
+      color: #e53935;
+
+      i { color: #e53935; }
+    }
+  }
+}
+
+.extranet-main {
+  flex: 1;
+  min-width: 0;
+}

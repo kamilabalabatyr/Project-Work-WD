@@ -2,7 +2,6 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PropertyService } from '../../services/property.service';
-import { AuthService } from '../../services/auth.service';
 import { IProperty } from '../../interfaces/property.interface';
 import { getPropertyImageUrl } from '../../utils/property-image.utils';
 
@@ -22,19 +21,7 @@ export class Properties implements OnInit {
   filterCity = signal('');
   filterMaxPrice = signal<number | null>(null);
 
-  showAddForm = signal(false);
-  newProperty = signal({
-    title: '',
-    description: '',
-    city: '',
-    price_per_night: undefined as number | undefined,
-    max_guests: undefined as number | undefined,
-  });
-
-  constructor(
-    private propertyService: PropertyService,
-    private authService: AuthService
-  ) {}
+  constructor(private propertyService: PropertyService) {}
 
   ngOnInit(): void {
     this.loadProperties();
@@ -71,27 +58,6 @@ export class Properties implements OnInit {
     this.filterCity.set('');
     this.filterMaxPrice.set(null);
     this.filteredProperties.set([...this.properties()]);
-  }
-
-  onAddProperty(): void {
-    const p = this.newProperty();
-    if (!p.title || !p.description || !p.city || !p.price_per_night || !p.max_guests) return;
-
-    this.propertyService.create(p).subscribe({
-      next: (created) => {
-        this.properties.update(list => [created, ...list]);
-        this.filteredProperties.update(list => [created, ...list]);
-        this.showAddForm.set(false);
-        this.newProperty.set({ title: '', description: '', city: '', price_per_night: undefined, max_guests: undefined });
-      },
-      error: () => {
-        this.errorMsg.set('Не удалось создать объявление');
-      }
-    });
-  }
-
-  isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
   }
 
   getImage(property: IProperty): string {

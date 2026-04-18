@@ -3,69 +3,7 @@
   <main class="main">
     <div class="top-bar">
       <h1>Все объекты</h1>
-      @if (isLoggedIn()) {
-        <button class="btn-primary" (click)="showAddForm.set(!showAddForm())">
-          {{ showAddForm() ? 'Отмена' : '+ Добавить объявление' }}
-        </button>
-      }
     </div>
-
-    <!-- add form -->
-    @if (showAddForm()) {
-      <div class="add-form">
-        <h3>Новое объявление</h3>
-        <div class="form-row">
-          <div class="field">
-            <label>Название</label>
-            <input
-              type="text"
-              [value]="newProperty().title"
-              (input)="newProperty.update(p => ({...p, title: $any($event.target).value}))"
-              placeholder="Уютная квартира в центре"
-            />
-          </div>
-          <div class="field">
-            <label>Город</label>
-            <input
-              type="text"
-              [value]="newProperty().city"
-              (input)="newProperty.update(p => ({...p, city: $any($event.target).value}))"
-              placeholder="Алматы"
-            />
-          </div>
-          <div class="field">
-            <label>Цена за ночь ($)</label>
-            <input
-              type="number"
-              [value]="newProperty().price_per_night"
-              (input)="newProperty.update(p => ({...p, price_per_night: +$any($event.target).value}))"
-              placeholder="50"
-              min="1"
-            />
-          </div>
-          <div class="field">
-            <label>Макс. гостей</label>
-            <input
-              type="number"
-              [value]="newProperty().max_guests"
-              (input)="newProperty.update(p => ({...p, max_guests: +$any($event.target).value}))"
-              placeholder="4"
-              min="1"
-            />
-          </div>
-        </div>
-        <div class="field">
-          <label>Описание</label>
-          <textarea
-            [value]="newProperty().description"
-            (input)="newProperty.update(p => ({...p, description: $any($event.target).value}))"
-            placeholder="Опишите ваш объект..."
-            rows="3"
-          ></textarea>
-        </div>
-        <button class="btn-primary" (click)="onAddProperty()">Опубликовать</button>
-      </div>
-    }
 
     <!-- filters -->
     <div class="filters">

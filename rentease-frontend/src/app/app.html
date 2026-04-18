@@ -1,21 +1,31 @@
-<header class="navbar">
-  <a class="logo" routerLink="/"><img src="/logo.png" alt="RentEase" height="28"> RentEase</a>
-  <nav>
-    <a routerLink="/properties">Все объекты</a>
-    @if (isLoggedIn()) {
-      <a routerLink="/my-bookings">Мои брони</a>
-      <button class="btn-nav" (click)="logout()">Выйти</button>
-    }
-    @if (!isLoggedIn()) {
-      <a routerLink="/login" class="btn-nav">Войти</a>
-    }
-  </nav>
-</header>
+@if (!isExtranet) {
+  <header class="navbar">
+    <a class="logo" routerLink="/"><img src="/logo.png" alt="RentEase" height="28"> RentEase</a>
+    <nav>
+      <a routerLink="/properties">Все объекты</a>
+      @if (isLoggedIn() && !isLandlord()) {
+        <a routerLink="/my-bookings">Мои брони</a>
+      }
+      @if (isLoggedIn()) {
+        <span class="nav-username">
+          <i class="ci-User_Circle"></i>
+          {{ getUsername() }}
+        </span>
+        <button class="btn-nav" (click)="logout()">Выйти</button>
+      }
+      @if (!isLoggedIn()) {
+        <a routerLink="/login" class="btn-nav">Войти</a>
+      }
+    </nav>
+  </header>
+}
 
 <main class="app-content">
   <router-outlet />
 </main>
 
-<footer class="footer">
-  <p>&copy; 2026 RentEase</p>
-</footer>
+@if (!isExtranet) {
+  <footer class="footer">
+    <p>&copy; 2026 RentEase</p>
+  </footer>
+}

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import { IProperty } from '../interfaces/property.interface';
+import { IBooking } from '../interfaces/booking.interface';
 
 export interface PaginatedResponse<T> {
   count: number;
@@ -31,7 +32,20 @@ export class PropertyService {
     return this.http.post<IProperty>(`${this.apiUrl}/properties/`, data);
   }
 
+  update(id: number, data: Partial<IProperty>): Observable<IProperty> {
+    return this.http.patch<IProperty>(`${this.apiUrl}/properties/${id}/`, data);
+  }
+
   delete(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/properties/${id}/`);
+  }
+
+  // Landlord extranet
+  getMyProperties(): Observable<IProperty[]> {
+    return this.http.get<IProperty[]>(`${this.apiUrl}/landlord/properties/`);
+  }
+
+  getPropertyBookings(propertyId: number): Observable<IBooking[]> {
+    return this.http.get<IBooking[]>(`${this.apiUrl}/landlord/properties/${propertyId}/bookings/`);
   }
 }

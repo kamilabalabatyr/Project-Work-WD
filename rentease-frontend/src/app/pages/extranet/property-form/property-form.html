@@ -1,0 +1,116 @@
+<div class="page">
+
+  <div class="page__header">
+    <a routerLink="/extranet/properties" class="back-link">
+      <i class="ci-Arrow_Left_MD"></i> Назад к объявлениям
+    </a>
+    <h1 class="page__title">
+      {{ isEditMode() ? 'Редактировать объявление' : 'Новое объявление' }}
+    </h1>
+    @if (!isEditMode()) {
+      <p class="page__hint">
+        <i class="ci-Info"></i>
+        После создания объявление уйдёт на модерацию и появится в каталоге после одобрения.
+      </p>
+    }
+  </div>
+
+  @if (isLoading()) {
+    <div class="state-message">
+      <i class="ci-Arrows_Reload_01"></i>
+      <span>Загрузка...</span>
+    </div>
+  } @else {
+    <form class="form-card" (ngSubmit)="onSubmit()">
+
+      <div class="field">
+        <label>Название</label>
+        <input
+          type="text"
+          [value]="formData().title"
+          (input)="formData.update(f => ({...f, title: $any($event.target).value}))"
+          placeholder="Например: Уютная квартира в центре"
+          required
+        />
+        @if (getFieldError('title')) {
+          <span class="field-error">{{ getFieldError('title') }}</span>
+        }
+      </div>
+
+      <div class="field">
+        <label>Город</label>
+        <input
+          type="text"
+          [value]="formData().city"
+          (input)="formData.update(f => ({...f, city: $any($event.target).value}))"
+          placeholder="Алматы"
+          required
+        />
+        @if (getFieldError('city')) {
+          <span class="field-error">{{ getFieldError('city') }}</span>
+        }
+      </div>
+
+      <div class="form-row">
+        <div class="field">
+          <label>Цена за ночь ($)</label>
+          <input
+            type="number"
+            [value]="formData().price_per_night ?? ''"
+            (input)="formData.update(f => ({...f, price_per_night: +$any($event.target).value || null}))"
+            placeholder="50"
+            min="1"
+            required
+          />
+          @if (getFieldError('price_per_night')) {
+            <span class="field-error">{{ getFieldError('price_per_night') }}</span>
+          }
+        </div>
+
+        <div class="field">
+          <label>Макс. гостей</label>
+          <input
+            type="number"
+            [value]="formData().max_guests ?? ''"
+            (input)="formData.update(f => ({...f, max_guests: +$any($event.target).value || null}))"
+            placeholder="4"
+            min="1"
+            required
+          />
+          @if (getFieldError('max_guests')) {
+            <span class="field-error">{{ getFieldError('max_guests') }}</span>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Описание</label>
+        <textarea
+          [value]="formData().description"
+          (input)="formData.update(f => ({...f, description: $any($event.target).value}))"
+          placeholder="Расскажите об объекте: удобства, особенности, правила..."
+          rows="5"
+          required
+        ></textarea>
+        @if (getFieldError('description')) {
+          <span class="field-error">{{ getFieldError('description') }}</span>
+        }
+      </div>
+
+      @if (errorMsg()) {
+        <div class="error">{{ errorMsg() }}</div>
+      }
+
+      <div class="form-actions">
+        <a routerLink="/extranet/properties" class="btn-secondary">Отмена</a>
+        <button type="submit" class="btn-primary" [disabled]="isSaving()">
+          @if (isSaving()) { Сохранение... } @else {
+            {{ isEditMode() ? 'Сохранить изменения' : 'Создать объявление' }}
+          }
+        </button>
+      </div>
+
+    </form>
+  }
+
+</div>

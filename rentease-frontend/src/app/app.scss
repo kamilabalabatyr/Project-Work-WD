@@ -45,6 +45,17 @@
   }
 }
 
+.nav-username {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+
+  i { font-size: 18px; color: #717171; }
+}
+
 .btn-nav {
   background: #FF385C;
   color: white !important;

@@ -1,0 +1,108 @@
+<div class="page">
+
+  <div class="page__header">
+    <a routerLink="/extranet/properties" class="back-link">
+      <i class="ci-Arrow_Left_MD"></i> Назад к объявлениям
+    </a>
+    <div class="page__title-row">
+      <h1 class="page__title">
+        {{ property()?.title ?? 'Брони объявления' }}
+      </h1>
+      @if (property()) {
+        <span class="page__city">
+          <i class="ci-Map_Pin"></i> {{ property()!.city }}
+        </span>
+      }
+    </div>
+  </div>
+
+  @if (isLoading()) {
+    <div class="state-message">
+      <i class="ci-Arrows_Reload_01"></i>
+      <span>Загрузка...</span>
+    </div>
+  } @else if (errorMsg()) {
+    <div class="state-message state-message--error">
+      <i class="ci-Circle_Warning"></i>
+      <span>{{ errorMsg() }}</span>
+    </div>
+  } @else {
+    <div class="content">
+
+      <!-- Calendar -->
+      <div class="calendar-card">
+        <div class="calendar-nav">
+          <button class="nav-btn" (click)="prevMonth()">
+            <i class="ci-Arrow_Left_MD"></i>
+          </button>
+          <span class="calendar-nav__label">{{ monthLabel }}</span>
+          <button class="nav-btn" (click)="nextMonth()">
+            <i class="ci-Arrow_Right_MD"></i>
+          </button>
+        </div>
+
+        <div class="calendar-grid">
+          @for (day of weekDays; track day) {
+            <div class="calendar-weekday">{{ day }}</div>
+          }
+          @for (day of calendarDays(); track day.date.getTime()) {
+            <div
+              class="calendar-day"
+              [class.other-month]="!day.isCurrentMonth"
+              [class.booked]="day.isBooked"
+              [title]="day.booking ? 'Гость: ' + day.booking.guest : ''"
+            >
+              {{ day.date.getDate() }}
+            </div>
+          }
+        </div>
+
+        <div class="calendar-legend">
+          <span class="legend-item">
+            <span class="legend-dot legend-dot--free"></span> Свободно
+          </span>
+          <span class="legend-item">
+            <span class="legend-dot legend-dot--booked"></span> Забронировано
+          </span>
+        </div>
+      </div>
+
+      <!-- Bookings list -->
+      <div class="bookings-section">
+        <h2 class="section-title">Все брони</h2>
+
+        @if (bookings().length === 0) {
+          <div class="empty-state">
+            <i class="ci-Calendar"></i>
+            <p>Броней пока нет</p>
+          </div>
+        } @else {
+          <div class="booking-list">
+            @for (booking of bookings(); track booking.id) {
+              <div class="booking-item">
+                <div class="booking-item__icon">
+                  <i class="ci-User_Circle"></i>
+                </div>
+                <div class="booking-item__info">
+                  <div class="booking-item__guest">{{ booking.guest }}</div>
+                  <div class="booking-item__dates">
+                    <i class="ci-Calendar"></i>
+                    {{ formatDate(booking.check_in) }} — {{ formatDate(booking.check_out) }}
+                    <span class="booking-item__nights">{{ nightsCount(booking) }} ночей</span>
+                  </div>
+                  <div class="booking-item__meta">
+                    <i class="ci-User_01"></i> {{ booking.guests_count }} гостей
+                    &nbsp;·&nbsp;
+                    <strong>{{ booking.total_price }} $</strong>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+  }
+
+</div>

@@ -9,6 +9,8 @@ export interface LoginResponse {
   role: string;
 }
 
+// sessionStorage is used intentionally: it is tab-isolated, so multiple
+// accounts open in different tabs do not overwrite each other's sessions.
 @Injectable({
   providedIn: 'root'
 })
@@ -30,19 +32,19 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!localStorage.getItem('token');
+    return !!sessionStorage.getItem('token');
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return sessionStorage.getItem('token');
   }
 
   getUsername(): string | null {
-    return localStorage.getItem('username');
+    return sessionStorage.getItem('username');
   }
 
   getRole(): string {
-    return localStorage.getItem('role') ?? 'guest';
+    return sessionStorage.getItem('role') ?? 'guest';
   }
 
   isLandlord(): boolean {
@@ -50,14 +52,14 @@ export class AuthService {
   }
 
   saveSession(res: LoginResponse): void {
-    localStorage.setItem('token', res.token);
-    localStorage.setItem('username', res.username);
-    localStorage.setItem('role', res.role);
+    sessionStorage.setItem('token', res.token);
+    sessionStorage.setItem('username', res.username);
+    sessionStorage.setItem('role', res.role);
   }
 
   clearToken(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('role');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('role');
   }
 }

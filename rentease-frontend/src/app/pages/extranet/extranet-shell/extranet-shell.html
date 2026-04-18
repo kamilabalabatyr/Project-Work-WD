@@ -1,0 +1,38 @@
+<div class="extranet-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar__header">
+      <a routerLink="/extranet" class="sidebar__logo">
+        <img src="/logo.png" alt="RentEase" height="28">
+        <span>Extranet</span>
+      </a>
+    </div>
+
+    <nav class="sidebar__nav">
+      <a
+        routerLink="/extranet/properties"
+        routerLinkActive="active"
+        class="sidebar__link"
+      >
+        <i class="ci-House_01"></i>
+        <span>Мои объявления</span>
+      </a>
+    </nav>
+
+    <div class="sidebar__footer">
+      <div class="sidebar__user">
+        <i class="ci-User_Circle"></i>
+        <span>{{ username }}</span>
+      </div>
+      <button class="sidebar__logout" (click)="logout()">
+        <i class="ci-Log_Out"></i>
+        <span>Выйти</span>
+      </button>
+    </div>
+  </aside>
+
+  <div class="extranet-main">
+    <router-outlet />
+  </div>
+
+</div>

@@ -6,5 +6,7 @@ export interface IProperty {
   price_per_night: number;
   max_guests: number;
   owner: string;
+  status: 'pending' | 'approved' | 'rejected';
+  rejection_reason: string;
   created_at: string;
 }

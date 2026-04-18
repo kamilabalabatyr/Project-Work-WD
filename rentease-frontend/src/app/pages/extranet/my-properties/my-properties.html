@@ -1,0 +1,86 @@
+<div class="page">
+
+  <div class="page__header">
+    <div>
+      <h1 class="page__title">Мои объявления</h1>
+      <p class="page__subtitle">Управляйте вашими объявлениями об аренде</p>
+    </div>
+    <a routerLink="/extranet/properties/new" class="btn-primary">
+      <i class="ci-Add_Plus"></i>
+      Добавить объявление
+    </a>
+  </div>
+
+  @if (isLoading()) {
+    <div class="state-message">
+      <i class="ci-Arrows_Reload_01"></i>
+      <span>Загрузка...</span>
+    </div>
+  } @else if (errorMsg()) {
+    <div class="state-message state-message--error">
+      <i class="ci-Circle_Warning"></i>
+      <span>{{ errorMsg() }}</span>
+    </div>
+  } @else if (properties().length === 0) {
+    <div class="empty-state">
+      <i class="ci-House_Add"></i>
+      <p>У вас пока нет объявлений</p>
+      <a routerLink="/extranet/properties/new" class="btn-primary">Создать первое</a>
+    </div>
+  } @else {
+    <div class="property-list">
+      @for (property of properties(); track property.id) {
+        <div class="property-card">
+          <div class="property-card__body">
+            <div class="property-card__info">
+              <div class="property-card__top">
+                <h3 class="property-card__title">{{ property.title }}</h3>
+                <span class="badge badge--{{ property.status }}">
+                  {{ statusLabel(property.status) }}
+                </span>
+              </div>
+              <p class="property-card__meta">
+                <i class="ci-Map_Pin"></i> {{ property.city }}
+                &nbsp;·&nbsp;
+                <i class="ci-User_01"></i> до {{ property.max_guests }} гостей
+                &nbsp;·&nbsp;
+                <strong>{{ property.price_per_night }} $</strong> / ночь
+              </p>
+              @if (property.status === 'rejected' && property.rejection_reason) {
+                <p class="property-card__rejection">
+                  <i class="ci-Info"></i> {{ property.rejection_reason }}
+                </p>
+              }
+            </div>
+
+            <div class="property-card__actions">
+              <a
+                [routerLink]="['/extranet/properties', property.id, 'calendar']"
+                class="btn-icon"
+                title="Брони"
+              >
+                <i class="ci-Calendar"></i>
+              </a>
+              <a
+                [routerLink]="['/extranet/properties', property.id, 'edit']"
+                class="btn-icon"
+                title="Редактировать"
+              >
+                <i class="ci-Edit_Pencil_01"></i>
+              </a>
+              <button
+                class="btn-icon btn-icon--danger"
+                title="Удалить"
+                [disabled]="deletingId() === property.id"
+                (click)="confirmDelete(property)"
+              >
+                <i class="ci-Trash_Empty"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</div>
