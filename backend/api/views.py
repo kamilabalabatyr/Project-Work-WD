@@ -9,7 +9,7 @@ from .models import Property, Booking, UserProfile
 from .serializers import (
     RegisterSerializer, LoginSerializer,
     PropertyModelSerializer, PropertyApprovalSerializer,
-    BookingModelSerializer,
+    BookingModelSerializer, LandlordBookingSerializer,
 )
 from .permissions import IsOwnerOrReadOnly, IsLandlord, IsAdmin
 from .throttles import AuthRateThrottle
@@ -191,6 +191,19 @@ def landlord_property_bookings_view(request, pk):
 
     bookings = Booking.objects.select_related('guest').filter(property=prop).order_by('check_in')
     serializer = BookingModelSerializer(bookings, many=True)
+    return Response(serializer.data)
+
+
+# ──────────────────────────────────────────
+# Landlord — all bookings across all own properties
+# ──────────────────────────────────────────
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsLandlord])
+def landlord_all_bookings_view(request):
+    bookings = Booking.objects.select_related('guest', 'property').filter(
+        property__owner=request.user
+    ).order_by('-check_in')
+    serializer = LandlordBookingSerializer(bookings, many=True)
     return Response(serializer.data)
 
 

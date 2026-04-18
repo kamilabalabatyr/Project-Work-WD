@@ -1,0 +1,285 @@
+.page {
+  padding: 32px;
+  max-width: 900px;
+
+  &__header {
+    margin-bottom: 28px;
+  }
+
+  &__title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #222;
+    margin: 0 0 4px;
+  }
+
+  &__subtitle {
+    font-size: 14px;
+    color: #717171;
+    margin: 0;
+  }
+}
+
+// ── States ──────────────────────────────────
+.state-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 24px;
+  color: #717171;
+  font-size: 15px;
+
+  i { font-size: 22px; }
+
+  &--error { color: #e53935; }
+}
+
+// ── Stats ────────────────────────────────────
+.stats-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 140px;
+  background: white;
+  border: 1px solid #ebebeb;
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  &__value {
+    font-size: 24px;
+    font-weight: 700;
+    color: #222;
+  }
+
+  &__label {
+    font-size: 13px;
+    color: #717171;
+  }
+}
+
+// ── Toolbar ──────────────────────────────────
+.toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+
+  &__search {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid #ebebeb;
+    border-radius: 10px;
+    padding: 0 14px;
+    height: 42px;
+
+    i {
+      font-size: 18px;
+      color: #aaa;
+      flex-shrink: 0;
+    }
+  }
+
+  &__input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    color: #222;
+    background: transparent;
+
+    &::placeholder { color: #aaa; }
+  }
+
+  &__sort {
+    height: 42px;
+    padding: 0 14px;
+    border: 1px solid #ebebeb;
+    border-radius: 10px;
+    font-size: 14px;
+    color: #444;
+    background: white;
+    cursor: pointer;
+    outline: none;
+
+    &:focus { border-color: #FF385C; }
+  }
+}
+
+// ── Empty ────────────────────────────────────
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 60px 20px;
+  color: #717171;
+  text-align: center;
+
+  i {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.4;
+  }
+
+  p {
+    font-size: 18px;
+    font-weight: 600;
+    color: #444;
+    margin: 0 0 6px;
+  }
+
+  span {
+    font-size: 14px;
+  }
+}
+
+// ── Booking List ─────────────────────────────
+.booking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.booking-card {
+  display: flex;
+  gap: 16px;
+  background: white;
+  border: 1px solid #ebebeb;
+  border-radius: 14px;
+  padding: 20px;
+  transition: box-shadow 0.15s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+  }
+
+  &--upcoming {
+    border-left: 3px solid #FF385C;
+  }
+
+  &__aside {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &__icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #f7f7f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i {
+      font-size: 24px;
+      color: #717171;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  &__guest {
+    font-size: 16px;
+    font-weight: 600;
+    color: #222;
+  }
+
+  &__price {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FF385C;
+  }
+
+  &__property {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: #444;
+    text-decoration: none;
+    font-weight: 500;
+
+    i { font-size: 14px; color: #717171; }
+
+    &:hover { color: #FF385C; text-decoration: underline; }
+  }
+
+  &__city {
+    color: #717171;
+    font-weight: 400;
+  }
+
+  &__dates {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #555;
+
+    i { font-size: 14px; color: #aaa; }
+  }
+
+  &__nights {
+    background: #f0f0f0;
+    border-radius: 20px;
+    padding: 1px 8px;
+    font-size: 12px;
+    color: #555;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 13px;
+    color: #717171;
+
+    i { font-size: 14px; }
+  }
+}
+
+// ── Badges ───────────────────────────────────
+.badge {
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 2px 8px;
+  white-space: nowrap;
+
+  &--upcoming {
+    background: #fff0f3;
+    color: #FF385C;
+  }
+
+  &--past {
+    background: #f0f0f0;
+    color: #717171;
+  }
+}

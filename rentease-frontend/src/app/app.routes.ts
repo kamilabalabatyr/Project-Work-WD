@@ -65,6 +65,11 @@ export const routes: Routes = [
         path: 'properties/:id/calendar',
         loadComponent: () =>
           import('./pages/extranet/property-calendar/property-calendar').then(m => m.PropertyCalendar)
+      },
+      {
+        path: 'bookings',
+        loadComponent: () =>
+          import('./pages/extranet/my-bookings/my-bookings').then(m => m.MyBookings)
       }
     ]
   },

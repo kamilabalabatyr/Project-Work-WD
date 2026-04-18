@@ -120,6 +120,17 @@ class BookingModelSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
+class LandlordBookingSerializer(serializers.ModelSerializer):
+    guest = serializers.ReadOnlyField(source='guest.username')
+    property_title = serializers.ReadOnlyField(source='property.title')
+    property_city = serializers.ReadOnlyField(source='property.city')
+
+    class Meta:
+        model = Booking
+        fields = ['id', 'property', 'property_title', 'property_city',
+                  'guest', 'check_in', 'check_out', 'guests_count', 'total_price', 'created_at']
+
+
 class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review

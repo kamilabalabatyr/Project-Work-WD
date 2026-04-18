@@ -1,0 +1,123 @@
+<div class="page">
+
+  <div class="page__header">
+    <h1 class="page__title">Бронирования</h1>
+    <p class="page__subtitle">Все брони по вашим объявлениям</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="state-message">
+      <i class="ci-Arrows_Reload_01"></i>
+      <span>Загрузка...</span>
+    </div>
+  } @else if (errorMsg()) {
+    <div class="state-message state-message--error">
+      <i class="ci-Circle_Warning"></i>
+      <span>{{ errorMsg() }}</span>
+    </div>
+  } @else {
+
+    <!-- Stats row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="stat-card__value">{{ bookings().length }}</span>
+        <span class="stat-card__label">Всего броней</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__value">{{ totalRevenue() | number:'1.0-0' }} $</span>
+        <span class="stat-card__label">Общий доход</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-card__value">
+          {{ bookings().length > 0 ? (totalRevenue() / bookings().length | number:'1.0-0') : 0 }} $
+        </span>
+        <span class="stat-card__label">Средний чек</span>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="toolbar__search">
+        <i class="ci-Search"></i>
+        <input
+          type="text"
+          placeholder="Поиск по гостю, объявлению или городу..."
+          [ngModel]="searchQuery()"
+          (ngModelChange)="searchQuery.set($event)"
+          class="toolbar__input"
+        />
+      </div>
+      <select
+        class="toolbar__sort"
+        [ngModel]="sortBy()"
+        (ngModelChange)="sortBy.set($event)"
+      >
+        <option value="date_desc">По дате: сначала новые</option>
+        <option value="date_asc">По дате: сначала старые</option>
+        <option value="price_desc">По цене: дороже</option>
+      </select>
+    </div>
+
+    @if (filtered().length === 0) {
+      <div class="empty-state">
+        <i class="ci-Calendar"></i>
+        @if (bookings().length === 0) {
+          <p>Броней пока нет</p>
+          <span>Как только гости забронируют ваши объявления — они появятся здесь</span>
+        } @else {
+          <p>Ничего не найдено</p>
+          <span>Попробуйте изменить поисковый запрос</span>
+        }
+      </div>
+    } @else {
+      <div class="booking-list">
+        @for (booking of filtered(); track booking.id) {
+          <div class="booking-card" [class.booking-card--upcoming]="isUpcoming(booking)">
+
+            <div class="booking-card__aside">
+              <div class="booking-card__icon">
+                <i class="ci-User_Circle"></i>
+              </div>
+              @if (isUpcoming(booking)) {
+                <span class="badge badge--upcoming">Предстоит</span>
+              } @else {
+                <span class="badge badge--past">Прошло</span>
+              }
+            </div>
+
+            <div class="booking-card__body">
+              <div class="booking-card__top">
+                <div class="booking-card__guest">{{ booking.guest }}</div>
+                <div class="booking-card__price">{{ booking.total_price | number:'1.0-0' }} $</div>
+              </div>
+
+              <a
+                [routerLink]="['/extranet/properties', booking.property, 'calendar']"
+                class="booking-card__property"
+              >
+                <i class="ci-House_01"></i>
+                {{ booking.property_title }}
+                @if (booking.property_city) {
+                  <span class="booking-card__city">· {{ booking.property_city }}</span>
+                }
+              </a>
+
+              <div class="booking-card__dates">
+                <i class="ci-Calendar"></i>
+                {{ formatDate(booking.check_in) }} — {{ formatDate(booking.check_out) }}
+                <span class="booking-card__nights">{{ nightsCount(booking) }} ночей</span>
+              </div>
+
+              <div class="booking-card__meta">
+                <i class="ci-User_01"></i> {{ booking.guests_count }} гостей
+              </div>
+            </div>
+
+          </div>
+        }
+      </div>
+    }
+
+  }
+
+</div>

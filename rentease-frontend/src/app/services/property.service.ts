@@ -48,4 +48,8 @@ export class PropertyService {
   getPropertyBookings(propertyId: number): Observable<IBooking[]> {
     return this.http.get<IBooking[]>(`${this.apiUrl}/landlord/properties/${propertyId}/bookings/`);
   }
+
+  getAllLandlordBookings(): Observable<IBooking[]> {
+    return this.http.get<IBooking[]>(`${this.apiUrl}/landlord/bookings/`);
+  }
 }

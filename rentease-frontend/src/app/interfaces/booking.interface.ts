@@ -1,6 +1,8 @@
 export interface IBooking {
   id: number;
   property: number;
+  property_title?: string;
+  property_city?: string;
   guest: string;
   check_in: string;
   check_out: string;

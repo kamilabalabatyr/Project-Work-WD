@@ -18,6 +18,7 @@ urlpatterns = [
     # Landlord extranet (FBV)
     path('landlord/properties/', views.landlord_properties_view, name='landlord-properties'),
     path('landlord/properties/<int:pk>/bookings/', views.landlord_property_bookings_view, name='landlord-property-bookings'),
+    path('landlord/bookings/', views.landlord_all_bookings_view, name='landlord-all-bookings'),
 
     # Bookings (CBV)
     path('bookings/', views.BookingListCreateView.as_view(), name='booking-list'),
