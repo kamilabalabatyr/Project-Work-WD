@@ -4,7 +4,7 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
-from .models import Property, Booking, Review, UserProfile
+from .models import Property, Booking, UserProfile
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -46,7 +46,6 @@ class LoginSerializer(serializers.Serializer):
 
 class PropertyModelSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
-    status = serializers.ReadOnlyField()
 
     class Meta:
         model = Property
@@ -129,10 +128,3 @@ class LandlordBookingSerializer(serializers.ModelSerializer):
         model = Booking
         fields = ['id', 'property', 'property_title', 'property_city',
                   'guest', 'check_in', 'check_out', 'guests_count', 'total_price', 'created_at']
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Review
-        fields = ['id', 'booking', 'rating', 'comment', 'created_at']
-        read_only_fields = ['created_at']
