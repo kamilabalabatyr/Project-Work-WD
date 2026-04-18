@@ -4,8 +4,7 @@ import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { PropertyService } from '../../services/property.service';
 import { BookingService } from '../../services/booking.service';
 import { AuthService } from '../../services/auth.service';
-import { IProperty } from '../../interfaces/property.interface';
-import { getPropertyImageUrl } from '../../utils/property-image.utils';
+import { IProperty, getPropertyPhotoUrl } from '../../interfaces/property.interface';
 
 @Component({
   selector: 'app-property-detail',
@@ -19,6 +18,7 @@ export class PropertyDetail implements OnInit {
   isLoading = signal(true);
   errorMsg = signal('');
   successMsg = signal('');
+  activeImageIndex = signal(0);
 
   booking = signal({ check_in: '', check_out: '', guests_count: 1 });
 
@@ -92,9 +92,24 @@ export class PropertyDetail implements OnInit {
     return p.owner === this.authService.getUsername();
   }
 
-  getImage(): string {
-    const id = this.property()?.id ?? 0;
-    return getPropertyImageUrl(id, 800, 400);
+  getImages(): string[] {
+    const imgs = this.property()?.images;
+    if (imgs && imgs.length > 0) return imgs.map(getPropertyPhotoUrl);
+    return [getPropertyPhotoUrl('photo_0.jpg')];
+  }
+
+  setActiveImage(index: number): void {
+    this.activeImageIndex.set(index);
+  }
+
+  prevImage(): void {
+    const len = this.getImages().length;
+    this.activeImageIndex.update(i => (i - 1 + len) % len);
+  }
+
+  nextImage(): void {
+    const len = this.getImages().length;
+    this.activeImageIndex.update(i => (i + 1) % len);
   }
 
   private extractError(err: any): string {

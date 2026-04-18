@@ -4,8 +4,7 @@ import { forkJoin } from 'rxjs';
 import { BookingService } from '../../services/booking.service';
 import { PropertyService } from '../../services/property.service';
 import { IBooking } from '../../interfaces/booking.interface';
-import { IProperty } from '../../interfaces/property.interface';
-import { getPropertyImageUrl } from '../../utils/property-image.utils';
+import { IProperty, getPropertyPhotoUrl } from '../../interfaces/property.interface';
 
 @Component({
   selector: 'app-my-bookings',
@@ -51,7 +50,8 @@ export class MyBookings implements OnInit {
   }
 
   getPropertyImage(id: number): string {
-    return getPropertyImageUrl(id, 240, 180);
+    const prop = this.propertiesMap().get(id);
+    return getPropertyPhotoUrl(prop?.images?.[0] ?? 'photo_0.jpg');
   }
 
   formatDate(dateStr: string): string {

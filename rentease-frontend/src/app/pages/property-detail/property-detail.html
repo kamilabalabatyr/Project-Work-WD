@@ -22,7 +22,33 @@
       <div class="detail-layout">
 
         <div class="detail-info">
-          <img [src]="getImage()" [alt]="property()!.title" class="detail-img" />
+          <div class="photo-gallery">
+            <div class="photo-main">
+              <img [src]="getImages()[activeImageIndex()]" [alt]="property()!.title" class="detail-img" />
+              @if (getImages().length > 1) {
+                <button class="gallery-btn gallery-btn--prev" (click)="prevImage()">
+                  <i class="ci-Arrow_Left_MD"></i>
+                </button>
+                <button class="gallery-btn gallery-btn--next" (click)="nextImage()">
+                  <i class="ci-Arrow_Right_MD"></i>
+                </button>
+                <div class="gallery-counter">{{ activeImageIndex() + 1 }} / {{ getImages().length }}</div>
+              }
+            </div>
+            @if (getImages().length > 1) {
+              <div class="photo-thumbs">
+                @for (url of getImages(); track $index) {
+                  <img
+                    [src]="url"
+                    [alt]="property()!.title"
+                    class="photo-thumb"
+                    [class.active]="activeImageIndex() === $index"
+                    (click)="setActiveImage($index)"
+                  />
+                }
+              </div>
+            }
+          </div>
 
           <div class="detail-body">
             <div class="detail-city"><i class="ci-Map_Pin"></i> {{ property()!.city }}</div>

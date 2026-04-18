@@ -2,6 +2,7 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PropertyService } from '../../../services/property.service';
+import { PROPERTY_PHOTOS, getPropertyPhotoUrl } from '../../../interfaces/property.interface';
 
 interface PropertyFormData {
   title: string;
@@ -34,6 +35,25 @@ export class PropertyForm implements OnInit {
     max_guests: null,
   });
 
+  selectedImages = signal<string[]>([]);
+  readonly allPhotos = PROPERTY_PHOTOS;
+  readonly getPhotoUrl = getPropertyPhotoUrl;
+
+  isImageSelected(filename: string): boolean {
+    return this.selectedImages().includes(filename);
+  }
+
+  toggleImage(filename: string): void {
+    const current = this.selectedImages();
+    if (current.includes(filename)) {
+      if (current.length > 1) {
+        this.selectedImages.set(current.filter(f => f !== filename));
+      }
+    } else {
+      this.selectedImages.set([...current, filename]);
+    }
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -60,6 +80,7 @@ export class PropertyForm implements OnInit {
           price_per_night: p.price_per_night,
           max_guests: p.max_guests,
         });
+        this.selectedImages.set(p.images?.length ? p.images : ['photo_0.jpg']);
         this.isLoading.set(false);
       },
       error: () => {
@@ -76,10 +97,18 @@ export class PropertyForm implements OnInit {
 
     const raw = this.formData();
     const id = this.propertyId();
+
+    if (this.selectedImages().length === 0) {
+      this.errorMsg.set('Выберите хотя бы одну фотографию');
+      this.isSaving.set(false);
+      return;
+    }
+
     const data = {
       ...raw,
       price_per_night: raw.price_per_night ?? undefined,
       max_guests: raw.max_guests ?? undefined,
+      images: this.selectedImages(),
     };
 
     const request = id

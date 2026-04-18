@@ -97,6 +97,27 @@
         }
       </div>
 
+      <div class="field">
+        <label>Фотографии <span class="label-hint">— выберите одну или несколько</span></label>
+        <div class="photo-picker">
+          @for (photo of allPhotos; track photo) {
+            <div
+              class="photo-option"
+              [class.selected]="isImageSelected(photo)"
+              (click)="toggleImage(photo)"
+            >
+              <img [src]="getPhotoUrl(photo)" [alt]="photo" />
+              @if (isImageSelected(photo)) {
+                <div class="photo-check"><i class="ci-Check_Big"></i></div>
+              }
+            </div>
+          }
+        </div>
+        @if (selectedImages().length === 0) {
+          <span class="field-error">Выберите хотя бы одну фотографию</span>
+        }
+      </div>
+
       @if (errorMsg()) {
         <div class="error">{{ errorMsg() }}</div>
       }

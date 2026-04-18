@@ -51,7 +51,7 @@ class PropertyModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Property
         fields = ['id', 'title', 'description', 'city', 'price_per_night',
-                  'max_guests', 'owner', 'status', 'rejection_reason', 'created_at']
+                  'max_guests', 'owner', 'status', 'rejection_reason', 'images', 'created_at']
         read_only_fields = ['owner', 'status', 'rejection_reason', 'created_at']
 
 

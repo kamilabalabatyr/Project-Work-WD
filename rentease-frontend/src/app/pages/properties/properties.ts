@@ -2,8 +2,7 @@ import { Component, OnInit, signal, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PropertyService } from '../../services/property.service';
-import { IProperty } from '../../interfaces/property.interface';
-import { getPropertyImageUrl } from '../../utils/property-image.utils';
+import { IProperty, getPropertyPhotoUrl } from '../../interfaces/property.interface';
 
 @Component({
   selector: 'app-properties',
@@ -78,6 +77,6 @@ export class Properties implements OnInit {
   }
 
   getImage(property: IProperty): string {
-    return getPropertyImageUrl(property.id, 400, 260);
+    return getPropertyPhotoUrl(property.images?.[0] ?? 'photo_0.jpg');
   }
 }

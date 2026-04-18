@@ -29,6 +29,7 @@ class Property(models.Model):
     max_guests = models.IntegerField()
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     rejection_reason = models.TextField(blank=True, default='')
+    images = models.JSONField(default=list, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

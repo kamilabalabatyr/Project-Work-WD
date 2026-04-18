@@ -8,5 +8,12 @@ export interface IProperty {
   owner: string;
   status: 'pending' | 'approved' | 'rejected';
   rejection_reason: string;
+  images: string[];
   created_at: string;
+}
+
+export const PROPERTY_PHOTOS: string[] = Array.from({ length: 20 }, (_, i) => `photo_${i}.jpg`);
+
+export function getPropertyPhotoUrl(filename: string): string {
+  return `/assets/property_photos/${filename}`;
 }
