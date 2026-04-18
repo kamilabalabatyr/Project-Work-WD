@@ -1,22 +1,26 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { landlordGuard } from './guards/landlord.guard';
+import { landlordRedirectGuard } from './guards/landlord-redirect.guard';
 
 export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./pages/home/home').then(m => m.Home)
+      import('./pages/home/home').then(m => m.Home),
+    canActivate: [landlordRedirectGuard]
   },
   {
     path: 'properties',
     loadComponent: () =>
-      import('./pages/properties/properties').then(m => m.Properties)
+      import('./pages/properties/properties').then(m => m.Properties),
+    canActivate: [landlordRedirectGuard]
   },
   {
     path: 'properties/:id',
     loadComponent: () =>
-      import('./pages/property-detail/property-detail').then(m => m.PropertyDetail)
+      import('./pages/property-detail/property-detail').then(m => m.PropertyDetail),
+    canActivate: [landlordRedirectGuard]
   },
   {
     path: 'login',
