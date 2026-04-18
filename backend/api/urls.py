@@ -15,6 +15,10 @@ urlpatterns = [
     path('admin/properties/pending/', views.pending_properties_view, name='pending-properties'),
     path('admin/properties/<int:pk>/approval/', views.property_approval_view, name='property-approval'),
 
+    # Landlord extranet (FBV)
+    path('landlord/properties/', views.landlord_properties_view, name='landlord-properties'),
+    path('landlord/properties/<int:pk>/bookings/', views.landlord_property_bookings_view, name='landlord-property-bookings'),
+
     # Bookings (CBV)
     path('bookings/', views.BookingListCreateView.as_view(), name='booking-list'),
     path('bookings/<int:pk>/', views.BookingDetailView.as_view(), name='booking-detail'),

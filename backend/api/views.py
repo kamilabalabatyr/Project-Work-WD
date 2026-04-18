@@ -168,6 +168,33 @@ def property_approval_view(request, pk):
 
 
 # ──────────────────────────────────────────
+# Landlord — own properties (all statuses)
+# ──────────────────────────────────────────
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsLandlord])
+def landlord_properties_view(request):
+    props = Property.objects.filter(owner=request.user).order_by('-created_at')
+    serializer = PropertyModelSerializer(props, many=True)
+    return Response(serializer.data)
+
+
+# ──────────────────────────────────────────
+# Landlord — bookings for one of own properties
+# ──────────────────────────────────────────
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsLandlord])
+def landlord_property_bookings_view(request, pk):
+    try:
+        prop = Property.objects.get(pk=pk, owner=request.user)
+    except Property.DoesNotExist:
+        return Response({'detail': 'Property not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    bookings = Booking.objects.select_related('guest').filter(property=prop).order_by('check_in')
+    serializer = BookingModelSerializer(bookings, many=True)
+    return Response(serializer.data)
+
+
+# ──────────────────────────────────────────
 # CBV #3 — Booking List / Create
 # ──────────────────────────────────────────
 class BookingListCreateView(generics.ListCreateAPIView):
