@@ -211,6 +211,9 @@
   text-align: center;
   padding: 60px;
   color: #717171;
+  p {
+    margin-bottom: 16px;
+  }
   &.error {
     color: #e53935;
   }

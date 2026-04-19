@@ -25,7 +25,7 @@
 
         @if (!isLoading() && !errorMsg() && filteredProperties().length === 0) {
           <div class="state">
-            <p>🔍 Ничего не найдено. Попробуйте изменить фильтры.</p>
+            <p><i class="ci-Search_Magnifying_Glass"></i> Ничего не найдено. Попробуйте изменить фильтры.</p>
             <button class="btn-clear" (click)="clearFilters()">Сбросить фильтры</button>
           </div>
         }
