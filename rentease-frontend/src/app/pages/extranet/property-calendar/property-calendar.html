@@ -50,6 +50,7 @@
               class="calendar-day"
               [class.other-month]="!day.isCurrentMonth"
               [class.booked]="day.isBooked"
+              [class.today]="day.isToday"
               [title]="day.booking ? 'Гость: ' + day.booking.guest : ''"
             >
               {{ day.date.getDate() }}

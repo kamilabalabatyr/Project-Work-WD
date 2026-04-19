@@ -8,6 +8,7 @@ interface CalendarDay {
   date: Date;
   isCurrentMonth: boolean;
   isBooked: boolean;
+  isToday: boolean;
   booking: IBooking | null;
 }
 
@@ -79,26 +80,31 @@ export class PropertyCalendar implements OnInit {
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
 
+    const today = new Date();
+    const todayTime = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+
     // Monday-based week: shift Sunday (0) to 7
-    let startDow = firstDay.getDay() || 7;
+    const startDow = firstDay.getDay() || 7;
     const days: CalendarDay[] = [];
 
     // Padding days from prev month
     for (let i = startDow - 1; i > 0; i--) {
       const date = new Date(year, month, 1 - i);
-      days.push({ date, isCurrentMonth: false, isBooked: false, booking: null });
+      days.push({ date, isCurrentMonth: false, isBooked: false, isToday: false, booking: null });
     }
 
     for (let d = 1; d <= lastDay.getDate(); d++) {
       const date = new Date(year, month, d);
+      const isToday = date.getTime() === todayTime;
       const booking = bookings.find(b => this.dateInRange(date, b.check_in, b.check_out)) ?? null;
-      days.push({ date, isCurrentMonth: true, isBooked: !!booking, booking });
+      days.push({ date, isCurrentMonth: true, isBooked: !!booking, isToday, booking });
     }
 
     // Pad to full weeks
+    let nextMonthDay = 1;
     while (days.length % 7 !== 0) {
-      const date = new Date(year, month + 1, days.length - lastDay.getDate());
-      days.push({ date, isCurrentMonth: false, isBooked: false, booking: null });
+      const date = new Date(year, month + 1, nextMonthDay++);
+      days.push({ date, isCurrentMonth: false, isBooked: false, isToday: false, booking: null });
     }
 
     return days;
@@ -106,8 +112,10 @@ export class PropertyCalendar implements OnInit {
 
   private dateInRange(date: Date, checkIn: string, checkOut: string): boolean {
     const d = date.getTime();
-    const from = new Date(checkIn).getTime();
-    const to = new Date(checkOut).getTime();
+    const ci = new Date(checkIn);
+    const from = new Date(ci.getFullYear(), ci.getMonth(), ci.getDate()).getTime();
+    const co = new Date(checkOut);
+    const to = new Date(co.getFullYear(), co.getMonth(), co.getDate()).getTime();
     return d >= from && d < to;
   }
 
