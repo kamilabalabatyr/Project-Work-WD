@@ -49,7 +49,8 @@
             <div
               class="calendar-day"
               [class.other-month]="!day.isCurrentMonth"
-              [class.booked]="day.isBooked"
+              [class.booked]="day.isBooked && !day.isCurrent"
+              [class.current]="day.isCurrent"
               [class.today]="day.isToday"
               [title]="day.booking ? 'Гость: ' + day.booking.guest : ''"
             >
@@ -61,6 +62,9 @@
         <div class="calendar-legend">
           <span class="legend-item">
             <span class="legend-dot legend-dot--free"></span> Свободно
+          </span>
+          <span class="legend-item">
+            <span class="legend-dot legend-dot--current"></span> Идёт сейчас
           </span>
           <span class="legend-item">
             <span class="legend-dot legend-dot--booked"></span> Забронировано
@@ -80,12 +84,25 @@
         } @else {
           <div class="booking-list">
             @for (booking of bookings(); track booking.id) {
-              <div class="booking-item">
+              <div class="booking-item" [class.booking-item--current]="bookingStatus(booking) === 'current'">
                 <div class="booking-item__icon">
                   <i class="ci-User_Circle"></i>
                 </div>
                 <div class="booking-item__info">
-                  <div class="booking-item__guest">{{ booking.guest }}</div>
+                  <div class="booking-item__top">
+                    <div class="booking-item__guest">{{ booking.guest }}</div>
+                    @switch (bookingStatus(booking)) {
+                      @case ('current') {
+                        <span class="booking-badge booking-badge--current">Идёт сейчас</span>
+                      }
+                      @case ('upcoming') {
+                        <span class="booking-badge booking-badge--upcoming">Предстоит</span>
+                      }
+                      @default {
+                        <span class="booking-badge booking-badge--past">Прошло</span>
+                      }
+                    }
+                  </div>
                   <div class="booking-item__dates">
                     <i class="ci-Calendar"></i>
                     {{ formatDate(booking.check_in) }} — {{ formatDate(booking.check_out) }}

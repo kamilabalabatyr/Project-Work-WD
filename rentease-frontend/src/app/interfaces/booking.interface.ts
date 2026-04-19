@@ -1,3 +1,5 @@
+export type BookingStatus = 'upcoming' | 'current' | 'completed' | 'cancelled';
+
 export interface IBooking {
   id: number;
   property: number;
@@ -8,5 +10,7 @@ export interface IBooking {
   check_out: string;
   guests_count: number;
   total_price: number;
+  status: 'active' | 'cancelled';
+  booking_status: BookingStatus;
   created_at: string;
 }

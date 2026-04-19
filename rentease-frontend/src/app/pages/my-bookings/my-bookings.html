@@ -3,9 +3,6 @@
   <main class="main">
     <div class="page-header">
       <h1>Мои бронирования</h1>
-      @if (!isLoading() && !errorMsg() && bookings().length > 0) {
-        <span class="bookings-count">{{ bookings().length }} {{ bookings().length === 1 ? 'бронь' : bookings().length < 5 ? 'брони' : 'броней' }}</span>
-      }
     </div>
 
     @if (isLoading()) {
@@ -31,75 +28,123 @@
     }
 
     @if (!isLoading() && !errorMsg() && bookings().length > 0) {
-      <div class="bookings-list">
-        @for (booking of bookings(); track booking.id) {
-          <div class="booking-card">
-            <a [routerLink]="['/properties', booking.property]" class="card-image-link">
-              <img
-                class="property-thumb"
-                [src]="getPropertyImage(booking.property)"
-                [alt]="getProperty(booking.property)?.title || 'Объект'"
-              />
-            </a>
-            <div class="card-body">
-              <div class="card-top">
-                <div class="property-info">
-                  <a [routerLink]="['/properties', booking.property]" class="property-title">
-                    {{ getProperty(booking.property)?.title || 'Объект #' + booking.property }}
-                  </a>
-                  @if (getProperty(booking.property)?.city) {
-                    <span class="property-city"><i class="ci-Location"></i> {{ getProperty(booking.property)?.city }}</span>
-                  }
-                </div>
-                    <a [routerLink]="['/properties', booking.property]" class="btn-link">
-                    Смотреть <i class="ci-Arrow_Right_MD"></i>
-                  </a>
-              </div>
 
-              <div class="card-details">
-                <div class="detail-item">
-                  <span class="detail-label">Заезд</span>
-                  <span class="detail-value">{{ formatDate(booking.check_in) }}</span>
-                </div>
-                <div class="detail-divider"><i class="ci-Arrow_Right_MD"></i></div>
-                <div class="detail-item">
-                  <span class="detail-label">Выезд</span>
-                  <span class="detail-value">{{ formatDate(booking.check_out) }}</span>
-                </div>
-                <div class="detail-nights">
-                  {{ nightsCount(booking.check_in, booking.check_out) }} ноч.
-                </div>
-              </div>
-
-              <div class="card-footer">
-                <div class="card-meta">
-                  <span class="meta-item"><i class="ci-Users_Group"></i> {{ booking.guests_count }} гост.</span>
-                  <span class="meta-price">${{ booking.total_price }}</span>
-                </div>
-                <div class="card-actions">
-                  <button
-                    class="btn-cancel"
-                    [disabled]="cancellingIds().has(booking.id)"
-                    (click)="cancelBooking(booking.id)"
-                  >
-                    @if (cancellingIds().has(booking.id)) {
-                      <span class="btn-spinner"></span>
-                    } @else {
-                      <i class="ci-Close_MD"></i>
-                    }
-                    Отменить
-                  </button>
-                </div>
-              </div>
-            </div>
+      <!-- Текущие -->
+      @if (current().length > 0) {
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">Текущие</h2>
+            <span class="section-count">{{ current().length }}</span>
           </div>
-        }
-      </div>
+          <div class="bookings-list">
+            @for (booking of current(); track booking.id) {
+              <ng-container *ngTemplateOutlet="bookingCard; context: { $implicit: booking }"></ng-container>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Предстоящие -->
+      @if (upcoming().length > 0) {
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">Предстоящие</h2>
+            <span class="section-count">{{ upcoming().length }}</span>
+          </div>
+          <div class="bookings-list">
+            @for (booking of upcoming(); track booking.id) {
+              <ng-container *ngTemplateOutlet="bookingCard; context: { $implicit: booking }"></ng-container>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- Завершённые -->
+      @if (completed().length > 0) {
+        <div class="section">
+          <div class="section-header">
+            <h2 class="section-title">Завершённые</h2>
+            <span class="section-count section-count--muted">{{ completed().length }}</span>
+          </div>
+          <div class="bookings-list">
+            @for (booking of completed(); track booking.id) {
+              <ng-container *ngTemplateOutlet="bookingCard; context: { $implicit: booking }"></ng-container>
+            }
+          </div>
+        </div>
+      }
+
     }
 
   </main>
 
 </div>
+
+<!-- Booking card template -->
+<ng-template #bookingCard let-booking>
+  <div class="booking-card" [class.booking-card--current]="booking.booking_status === 'current'">
+    <a [routerLink]="['/properties', booking.property]" class="card-image-link">
+      <img
+        class="property-thumb"
+        [src]="getPropertyImage(booking.property)"
+        [alt]="getProperty(booking.property)?.title || 'Объект'"
+      />
+    </a>
+    <div class="card-body">
+      <div class="card-top">
+        <div class="property-info">
+          <a [routerLink]="['/properties', booking.property]" class="property-title">
+            {{ getProperty(booking.property)?.title || 'Объект #' + booking.property }}
+          </a>
+          @if (getProperty(booking.property)?.city) {
+            <span class="property-city"><i class="ci-Location"></i> {{ getProperty(booking.property)?.city }}</span>
+          }
+        </div>
+        <a [routerLink]="['/properties', booking.property]" class="btn-link">
+          Смотреть <i class="ci-Arrow_Right_MD"></i>
+        </a>
+      </div>
+
+      <div class="card-details">
+        <div class="detail-item">
+          <span class="detail-label">Заезд</span>
+          <span class="detail-value">{{ formatDate(booking.check_in) }}</span>
+        </div>
+        <div class="detail-divider"><i class="ci-Arrow_Right_MD"></i></div>
+        <div class="detail-item">
+          <span class="detail-label">Выезд</span>
+          <span class="detail-value">{{ formatDate(booking.check_out) }}</span>
+        </div>
+        <div class="detail-nights">
+          {{ nightsCount(booking.check_in, booking.check_out) }} ноч.
+        </div>
+      </div>
+
+      <div class="card-footer">
+        <div class="card-meta">
+          <span class="meta-item"><i class="ci-Users_Group"></i> {{ booking.guests_count }} гост.</span>
+          <span class="meta-price">${{ booking.total_price }}</span>
+        </div>
+        <div class="card-actions">
+          @if (booking.booking_status === 'upcoming') {
+            <button
+              class="btn-cancel"
+              [disabled]="cancellingIds().has(booking.id)"
+              (click)="cancelBooking(booking.id)"
+            >
+              @if (cancellingIds().has(booking.id)) {
+                <span class="btn-spinner"></span>
+              } @else {
+                <i class="ci-Close_MD"></i>
+              }
+              Отменить
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
 
 @if (confirmCancelId() !== null) {
   <div class="modal-overlay" (click)="dismissCancel()">

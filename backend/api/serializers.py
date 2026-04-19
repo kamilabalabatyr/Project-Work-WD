@@ -69,11 +69,23 @@ class PropertyApprovalSerializer(serializers.Serializer):
 class BookingModelSerializer(serializers.ModelSerializer):
     guest = serializers.ReadOnlyField(source='guest.username')
     total_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    booking_status = serializers.SerializerMethodField()
 
     class Meta:
         model = Booking
-        fields = ['id', 'property', 'guest', 'check_in', 'check_out', 'guests_count', 'total_price', 'created_at']
-        read_only_fields = ['guest', 'total_price', 'created_at']
+        fields = ['id', 'property', 'guest', 'check_in', 'check_out', 'guests_count',
+                  'total_price', 'status', 'booking_status', 'created_at']
+        read_only_fields = ['guest', 'total_price', 'status', 'booking_status', 'created_at']
+
+    def get_booking_status(self, obj) -> str:
+        if obj.status == 'cancelled':
+            return 'cancelled'
+        today = date.today()
+        if obj.check_in > today:
+            return 'upcoming'
+        if obj.check_out <= today:
+            return 'completed'
+        return 'current'
 
     def validate(self, data):
         check_in = data['check_in']
@@ -98,11 +110,12 @@ class BookingModelSerializer(serializers.ModelSerializer):
         if prop.status != 'approved':
             raise serializers.ValidationError('This property is not available for booking.')
 
-        # Date collision check — prevent overbooking
+        # Date collision check — exclude cancelled bookings
         overlapping = Booking.objects.filter(
             property=prop,
             check_in__lt=check_out,
             check_out__gt=check_in,
+            status='active',
         )
         if self.instance:
             overlapping = overlapping.exclude(pk=self.instance.pk)
@@ -123,8 +136,18 @@ class LandlordBookingSerializer(serializers.ModelSerializer):
     guest = serializers.ReadOnlyField(source='guest.username')
     property_title = serializers.ReadOnlyField(source='property.title')
     property_city = serializers.ReadOnlyField(source='property.city')
+    booking_status = serializers.SerializerMethodField()
 
     class Meta:
         model = Booking
         fields = ['id', 'property', 'property_title', 'property_city',
-                  'guest', 'check_in', 'check_out', 'guests_count', 'total_price', 'created_at']
+                  'guest', 'check_in', 'check_out', 'guests_count', 'total_price',
+                  'booking_status', 'created_at']
+
+    def get_booking_status(self, obj) -> str:
+        today = date.today()
+        if obj.check_in > today:
+            return 'upcoming'
+        if obj.check_out <= today:
+            return 'completed'
+        return 'current'

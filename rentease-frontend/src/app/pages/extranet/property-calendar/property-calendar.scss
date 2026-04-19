@@ -136,6 +136,12 @@
     font-weight: 600;
   }
 
+  &.current {
+    background: #16a34a;
+    color: white;
+    font-weight: 600;
+  }
+
   &.today {
     outline: 2px solid #F5A623;
     outline-offset: -2px;
@@ -165,6 +171,7 @@
   border-radius: 3px;
 
   &--free { background: #f0f0f0; border: 1px solid #ddd; }
+  &--current { background: #16a34a; }
   &--booked { background: #FF385C; }
 }
 
@@ -209,16 +216,27 @@
 
   &:last-child { border-bottom: none; }
 
+  &--current {
+    .booking-item__guest { color: #16a34a; }
+  }
+
   &__icon {
     flex-shrink: 0;
     i { font-size: 32px; color: #ddd; }
+  }
+
+  &__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
   }
 
   &__guest {
     font-size: 14px;
     font-weight: 600;
     color: #222;
-    margin-bottom: 4px;
   }
 
   &__dates {
@@ -250,5 +268,29 @@
     gap: 4px;
 
     i { font-size: 14px; }
+  }
+}
+
+.booking-badge {
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 20px;
+  padding: 2px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  &--current {
+    background: #f0fdf4;
+    color: #16a34a;
+  }
+
+  &--upcoming {
+    background: #fff0f3;
+    color: #FF385C;
+  }
+
+  &--past {
+    background: #f0f0f0;
+    color: #717171;
   }
 }

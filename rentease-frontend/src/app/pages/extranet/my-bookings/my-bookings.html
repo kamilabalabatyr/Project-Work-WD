@@ -72,16 +72,24 @@
     } @else {
       <div class="booking-list">
         @for (booking of filtered(); track booking.id) {
-          <div class="booking-card" [class.booking-card--upcoming]="isUpcoming(booking)">
+          <div class="booking-card"
+               [class.booking-card--upcoming]="bookingStatus(booking) === 'upcoming'"
+               [class.booking-card--current]="bookingStatus(booking) === 'current'">
 
             <div class="booking-card__aside">
               <div class="booking-card__icon">
                 <i class="ci-User_Circle"></i>
               </div>
-              @if (isUpcoming(booking)) {
-                <span class="badge badge--upcoming">Предстоит</span>
-              } @else {
-                <span class="badge badge--past">Прошло</span>
+              @switch (bookingStatus(booking)) {
+                @case ('current') {
+                  <span class="badge badge--current">Идёт сейчас</span>
+                }
+                @case ('upcoming') {
+                  <span class="badge badge--upcoming">Предстоит</span>
+                }
+                @default {
+                  <span class="badge badge--past">Прошло</span>
+                }
               }
             </div>
 

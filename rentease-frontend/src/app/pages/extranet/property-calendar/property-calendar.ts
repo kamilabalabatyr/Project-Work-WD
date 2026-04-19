@@ -8,6 +8,7 @@ interface CalendarDay {
   date: Date;
   isCurrentMonth: boolean;
   isBooked: boolean;
+  isCurrent: boolean;
   isToday: boolean;
   booking: IBooking | null;
 }
@@ -90,21 +91,22 @@ export class PropertyCalendar implements OnInit {
     // Padding days from prev month
     for (let i = startDow - 1; i > 0; i--) {
       const date = new Date(year, month, 1 - i);
-      days.push({ date, isCurrentMonth: false, isBooked: false, isToday: false, booking: null });
+      days.push({ date, isCurrentMonth: false, isBooked: false, isCurrent: false, isToday: false, booking: null });
     }
 
     for (let d = 1; d <= lastDay.getDate(); d++) {
       const date = new Date(year, month, d);
       const isToday = date.getTime() === todayTime;
       const booking = bookings.find(b => this.dateInRange(date, b.check_in, b.check_out)) ?? null;
-      days.push({ date, isCurrentMonth: true, isBooked: !!booking, isToday, booking });
+      const isCurrent = booking?.booking_status === 'current';
+      days.push({ date, isCurrentMonth: true, isBooked: !!booking, isCurrent: !!isCurrent, isToday, booking });
     }
 
     // Pad to full weeks
     let nextMonthDay = 1;
     while (days.length % 7 !== 0) {
       const date = new Date(year, month + 1, nextMonthDay++);
-      days.push({ date, isCurrentMonth: false, isBooked: false, isToday: false, booking: null });
+      days.push({ date, isCurrentMonth: false, isBooked: false, isCurrent: false, isToday: false, booking: null });
     }
 
     return days;
@@ -117,6 +119,10 @@ export class PropertyCalendar implements OnInit {
     const co = new Date(checkOut);
     const to = new Date(co.getFullYear(), co.getMonth(), co.getDate()).getTime();
     return d >= from && d < to;
+  }
+
+  bookingStatus(booking: IBooking): 'upcoming' | 'current' | 'completed' {
+    return booking.booking_status as 'upcoming' | 'current' | 'completed';
   }
 
   formatDate(dateStr: string): string {

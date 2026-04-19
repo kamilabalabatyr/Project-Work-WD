@@ -1,3 +1,5 @@
+from datetime import date
+
 from rest_framework.decorators import api_view, permission_classes, throttle_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
@@ -189,7 +191,9 @@ def landlord_property_bookings_view(request, pk):
     except Property.DoesNotExist:
         return Response({'detail': 'Property not found.'}, status=status.HTTP_404_NOT_FOUND)
 
-    bookings = Booking.objects.select_related('guest').filter(property=prop).order_by('check_in')
+    bookings = Booking.objects.select_related('guest').filter(
+        property=prop, status='active'
+    ).order_by('check_in')
     serializer = BookingModelSerializer(bookings, many=True)
     return Response(serializer.data)
 
@@ -201,7 +205,7 @@ def landlord_property_bookings_view(request, pk):
 @permission_classes([IsAuthenticated, IsLandlord])
 def landlord_all_bookings_view(request):
     bookings = Booking.objects.select_related('guest', 'property').filter(
-        property__owner=request.user
+        property__owner=request.user, status='active'
     ).order_by('-check_in')
     serializer = LandlordBookingSerializer(bookings, many=True)
     return Response(serializer.data)
@@ -216,7 +220,7 @@ class BookingListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         return Booking.objects.select_related('property', 'guest').filter(
-            guest=self.request.user
+            guest=self.request.user, status='active'
         )
 
     def perform_create(self, serializer):
@@ -224,7 +228,7 @@ class BookingListCreateView(generics.ListCreateAPIView):
 
 
 # ──────────────────────────────────────────
-# CBV #4 — Booking Detail / Delete
+# CBV #4 — Booking Detail / Cancel (soft-delete)
 # ──────────────────────────────────────────
 class BookingDetailView(generics.RetrieveDestroyAPIView):
     serializer_class = BookingModelSerializer
@@ -234,3 +238,14 @@ class BookingDetailView(generics.RetrieveDestroyAPIView):
         return Booking.objects.select_related('property', 'guest').filter(
             guest=self.request.user
         )
+
+    def destroy(self, request, *args, **kwargs):
+        booking = self.get_object()
+        if booking.check_in <= date.today():
+            return Response(
+                {'detail': 'Cannot cancel a booking that has already started or completed.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        booking.status = 'cancelled'
+        booking.save(update_fields=['status'])
+        return Response(status=status.HTTP_204_NO_CONTENT)

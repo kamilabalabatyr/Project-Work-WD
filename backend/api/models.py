@@ -41,12 +41,17 @@ class Property(models.Model):
 
 
 class Booking(models.Model):
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('cancelled', 'Cancelled'),
+    ]
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name='bookings')  # FK #2
     guest = models.ForeignKey(User, on_delete=models.CASCADE, related_name='bookings')          # FK #3
     check_in = models.DateField()
     check_out = models.DateField()
     guests_count = models.IntegerField()
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='active')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

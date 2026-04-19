@@ -1,5 +1,6 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, computed } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { NgTemplateOutlet } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { BookingService } from '../../services/booking.service';
 import { PropertyService } from '../../services/property.service';
@@ -9,7 +10,7 @@ import { IProperty, getPropertyPhotoUrl } from '../../interfaces/property.interf
 @Component({
   selector: 'app-my-bookings',
   standalone: true,
-  imports: [RouterModule],
+  imports: [RouterModule, NgTemplateOutlet],
   templateUrl: './my-bookings.html',
   styleUrl: './my-bookings.scss'
 })
@@ -20,6 +21,10 @@ export class MyBookings implements OnInit {
   errorMsg = signal('');
   cancellingIds = signal<Set<number>>(new Set());
   confirmCancelId = signal<number | null>(null);
+
+  upcoming = computed(() => this.bookings().filter(b => b.booking_status === 'upcoming'));
+  current  = computed(() => this.bookings().filter(b => b.booking_status === 'current'));
+  completed = computed(() => this.bookings().filter(b => b.booking_status === 'completed'));
 
   constructor(
     private bookingService: BookingService,

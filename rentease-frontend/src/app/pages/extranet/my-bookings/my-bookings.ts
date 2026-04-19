@@ -71,7 +71,7 @@ export class MyBookings implements OnInit {
     return Math.round(ms / 86_400_000);
   }
 
-  isUpcoming(booking: IBooking): boolean {
-    return new Date(booking.check_in) >= new Date();
+  bookingStatus(booking: IBooking): 'upcoming' | 'current' | 'completed' {
+    return booking.booking_status as 'upcoming' | 'current' | 'completed';
   }
 }
