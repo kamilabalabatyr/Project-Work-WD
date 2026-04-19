@@ -33,6 +33,12 @@ export const routes: Routes = [
       import('./pages/my-bookings/my-bookings').then(m => m.MyBookings),
     canActivate: [authGuard]
   },
+  {
+    path: 'payment/:bookingId',
+    loadComponent: () =>
+      import('./pages/payment/payment').then(m => m.Payment),
+    canActivate: [authGuard]
+  },
 
   // Extranet — landlord section
   {

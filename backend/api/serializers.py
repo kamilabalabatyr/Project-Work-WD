@@ -4,7 +4,7 @@ from rest_framework import serializers
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 
-from .models import Property, Booking, UserProfile
+from .models import Property, Booking, UserProfile, Payment
 
 
 class RegisterSerializer(serializers.Serializer):
@@ -130,6 +130,57 @@ class BookingModelSerializer(serializers.ModelSerializer):
         nights = (validated_data['check_out'] - validated_data['check_in']).days
         validated_data['total_price'] = validated_data['property'].price_per_night * nights
         return super().create(validated_data)
+
+
+class PaymentSerializer(serializers.Serializer):
+    booking_id = serializers.IntegerField()
+    card_number = serializers.CharField(write_only=True, max_length=19)
+    expiry = serializers.CharField(write_only=True, max_length=5)
+    cvv = serializers.CharField(write_only=True, max_length=4)
+    cardholder = serializers.CharField(write_only=True, max_length=100)
+
+    # Read-only fields
+    id = serializers.IntegerField(read_only=True)
+    amount = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    status = serializers.CharField(read_only=True)
+    card_last4 = serializers.CharField(read_only=True)
+
+    def validate_card_number(self, value):
+        digits = value.replace(' ', '')
+        if not digits.isdigit() or len(digits) < 13:
+            raise serializers.ValidationError('Неверный номер карты.')
+        return digits
+
+    def validate_expiry(self, value):
+        import re
+        if not re.match(r'^\d{2}/\d{2}$', value):
+            raise serializers.ValidationError('Формат: MM/YY')
+        return value
+
+    def validate(self, data):
+        booking_id = data.get('booking_id')
+        request = self.context.get('request')
+        try:
+            booking = Booking.objects.get(pk=booking_id, guest=request.user)
+        except Booking.DoesNotExist:
+            raise serializers.ValidationError({'booking_id': 'Бронирование не найдено.'})
+        if hasattr(booking, 'payment'):
+            raise serializers.ValidationError({'booking_id': 'Оплата уже была произведена.'})
+        data['booking'] = booking
+        return data
+
+    def create(self, validated_data):
+        booking = validated_data['booking']
+        digits = validated_data['card_number']
+        card_last4 = digits[-4:]
+        
+        pay_status = 'failed' if card_last4 == '0000' else 'success'
+        return Payment.objects.create(
+            booking=booking,
+            amount=booking.total_price,
+            status=pay_status,
+            card_last4=card_last4,
+        )
 
 
 class LandlordBookingSerializer(serializers.ModelSerializer):

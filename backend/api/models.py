@@ -61,6 +61,22 @@ class Booking(models.Model):
         return f'Booking #{self.pk} — {self.guest.username} @ {self.property.title}'
 
 
+class Payment(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('success', 'Success'),
+        ('failed', 'Failed'),
+    ]
+    booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='payment')
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    card_last4 = models.CharField(max_length=4)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Payment #{self.pk} — Booking #{self.booking_id} [{self.status}]'
+
+
 class Review(models.Model):
     booking = models.OneToOneField(Booking, on_delete=models.CASCADE, related_name='review')  # FK #4
     rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])

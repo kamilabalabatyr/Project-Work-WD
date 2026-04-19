@@ -59,10 +59,8 @@ export class PropertyDetail implements OnInit {
       check_out: b.check_out,
       guests_count: b.guests_count
     }).subscribe({
-      next: () => {
-        this.successMsg.set('Бронирование успешно создано!');
-        this.booking.set({ check_in: '', check_out: '', guests_count: 1 });
-        this.errorMsg.set('');
+      next: (booking) => {
+        this.router.navigate(['/payment', booking.id]);
       },
       error: (err) => {
         const msg = this.extractError(err);

@@ -12,6 +12,7 @@ from .serializers import (
     RegisterSerializer, LoginSerializer,
     PropertyModelSerializer, PropertyApprovalSerializer,
     BookingModelSerializer, LandlordBookingSerializer,
+    PaymentSerializer,
 )
 from .permissions import IsOwnerOrReadOnly, IsLandlord, IsAdmin
 from .throttles import AuthRateThrottle
@@ -249,3 +250,21 @@ class BookingDetailView(generics.RetrieveDestroyAPIView):
         booking.status = 'cancelled'
         booking.save(update_fields=['status'])
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# ──────────────────────────────────────────
+# FBV — Payment emulation
+# ──────────────────────────────────────────
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def payment_view(request):
+    serializer = PaymentSerializer(data=request.data, context={'request': request})
+    serializer.is_valid(raise_exception=True)
+    payment = serializer.save()
+    return Response({
+        'id': payment.pk,
+        'booking_id': payment.booking_id,
+        'amount': str(payment.amount),
+        'status': payment.status,
+        'card_last4': payment.card_last4,
+    }, status=status.HTTP_201_CREATED)

@@ -1,0 +1,97 @@
+<div class="payment-wrapper">
+  <div class="payment-card">
+
+    <h1 class="logo"><img src="/logo.png" alt="RentEase" height="36"> RentEase</h1>
+
+    @if (state() === 'form') {
+      <h2>Оплата бронирования</h2>
+
+      <form (ngSubmit)="onSubmit()">
+        <div class="field">
+          <label>Номер карты</label>
+          <div class="card-input-wrapper">
+            <i class="ci-Credit_Card_01"></i>
+            <input
+              type="text"
+              [value]="card().number"
+              (input)="onCardNumberInput($event)"
+              placeholder="0000 0000 0000 0000"
+              maxlength="19"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Срок действия</label>
+            <input
+              type="text"
+              [value]="card().expiry"
+              (input)="onExpiryInput($event)"
+              placeholder="MM/YY"
+              maxlength="5"
+              required
+            />
+          </div>
+          <div class="field">
+            <label>CVV</label>
+            <input
+              type="password"
+              [value]="card().cvv"
+              (input)="onCvvInput($event)"
+              placeholder="•••"
+              maxlength="4"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Имя владельца</label>
+          <input
+            type="text"
+            [value]="card().cardholder"
+            (input)="card.update(c => ({...c, cardholder: $any($event.target).value}))"
+            placeholder="IVAN PETROV"
+            required
+          />
+        </div>
+
+        @if (errorMsg()) {
+          <div class="error">{{ errorMsg() }}</div>
+        }
+
+        <button type="submit" class="btn-primary">
+          Оплатить
+        </button>
+      </form>
+    }
+
+    @if (state() === 'loading') {
+      <div class="state-screen">
+        <div class="spinner"></div>
+        <p>Обработка платежа...</p>
+      </div>
+    }
+
+    @if (state() === 'success') {
+      <div class="state-screen success">
+        <div class="state-icon success-icon">✓</div>
+        <h2>Оплата прошла успешно!</h2>
+        <p>Ваше бронирование подтверждено. Переход к бронированиям через <strong>{{ countdown() }}</strong> сек...</p>
+        <a routerLink="/my-bookings" class="btn-primary btn-center">Мои бронирования</a>
+      </div>
+    }
+
+    @if (state() === 'failed') {
+      <div class="state-screen failed">
+        <div class="state-icon failed-icon">✕</div>
+        <h2>Оплата отклонена</h2>
+        <p>Проверьте данные карты и попробуйте снова.</p>
+        <button class="btn-primary" (click)="retryPayment()">Попробовать снова</button>
+      </div>
+    }
+
+  </div>
+</div>

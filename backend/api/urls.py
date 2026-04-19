@@ -23,4 +23,7 @@ urlpatterns = [
     # Bookings (CBV)
     path('bookings/', views.BookingListCreateView.as_view(), name='booking-list'),
     path('bookings/<int:pk>/', views.BookingDetailView.as_view(), name='booking-detail'),
+
+    # Payment emulation
+    path('payments/', views.payment_view, name='payment'),
 ]
