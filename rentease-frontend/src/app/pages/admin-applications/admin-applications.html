@@ -1,0 +1,181 @@
+<div class="admin-page">
+
+  <div class="admin-page__header">
+    <h1 class="admin-page__title">Заявки на публикацию</h1>
+    <p class="admin-page__subtitle">Управление объявлениями арендодателей</p>
+  </div>
+
+  @if (isLoading()) {
+    <div class="state-message">
+      <i class="ci-Arrows_Reload_01"></i>
+      <span>Загрузка...</span>
+    </div>
+  } @else if (errorMsg()) {
+    <div class="state-message state-message--error">
+      <i class="ci-Circle_Warning"></i>
+      <span>{{ errorMsg() }}</span>
+    </div>
+  } @else {
+
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__badge section__badge--pending">{{ pending().length }}</span>
+        Ожидают проверки
+      </h2>
+
+      @if (pending().length === 0) {
+        <div class="empty-state">
+          <i class="ci-Check_Big"></i>
+          <p>Новых заявок нет</p>
+        </div>
+      } @else {
+        <div class="property-list">
+          @for (property of pending(); track property.id) {
+            <div class="property-card">
+              <div class="property-card__body">
+                <div class="property-card__info">
+                  <div class="property-card__top">
+                    <h3 class="property-card__title">{{ property.title }}</h3>
+                    <span class="badge badge--pending">На модерации</span>
+                  </div>
+                  <p class="property-card__meta">
+                    <i class="ci-Map_Pin"></i> {{ property.city }}
+                    &nbsp;·&nbsp;
+                    <i class="ci-User_01"></i> до {{ property.max_guests }} гостей
+                    &nbsp;·&nbsp;
+                    <strong>{{ property.price_per_night }} $</strong> / ночь
+                  </p>
+                  <p class="property-card__owner">
+                    <i class="ci-User_Circle"></i> Арендодатель: {{ property.owner }}
+                  </p>
+                </div>
+                <div class="property-card__actions">
+                  <button
+                    class="btn-action btn-action--approve"
+                    [disabled]="processingId() === property.id"
+                    (click)="approve(property)"
+                  >
+                    <i class="ci-Check_Big"></i> Одобрить
+                  </button>
+                  <button
+                    class="btn-action btn-action--reject"
+                    [disabled]="processingId() === property.id"
+                    (click)="reject(property)"
+                  >
+                    <i class="ci-Close_MD"></i> Отклонить
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="section">
+      <h2 class="section__title">
+        <span class="section__badge section__badge--approved">{{ approved().length }}</span>
+        Опубликованные объявления
+      </h2>
+
+      @if (approved().length === 0) {
+        <div class="empty-state">
+          <i class="ci-House_02"></i>
+          <p>Нет опубликованных объявлений</p>
+        </div>
+      } @else {
+        <div class="property-list">
+          @for (property of approved(); track property.id) {
+            <div class="property-card">
+              <div class="property-card__body">
+                <div class="property-card__info">
+                  <div class="property-card__top">
+                    <h3 class="property-card__title">{{ property.title }}</h3>
+                    <span class="badge badge--approved">Активно</span>
+                  </div>
+                  <p class="property-card__meta">
+                    <i class="ci-Map_Pin"></i> {{ property.city }}
+                    &nbsp;·&nbsp;
+                    <i class="ci-User_01"></i> до {{ property.max_guests }} гостей
+                    &nbsp;·&nbsp;
+                    <strong>{{ property.price_per_night }} $</strong> / ночь
+                  </p>
+                  <p class="property-card__owner">
+                    <i class="ci-User_Circle"></i> Арендодатель: {{ property.owner }}
+                  </p>
+                </div>
+                <div class="property-card__actions">
+                  <button
+                    class="btn-action btn-action--deactivate"
+                    [disabled]="processingId() === property.id"
+                    (click)="deactivate(property)"
+                  >
+                    <i class="ci-Hide"></i> Деактивировать
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    @if (inactive().length > 0) {
+      <section class="section">
+        <h2 class="section__title">
+          <span class="section__badge section__badge--inactive">{{ inactive().length }}</span>
+          Деактивированные объявления
+        </h2>
+
+        <div class="property-list">
+          @for (property of inactive(); track property.id) {
+            <div class="property-card property-card--inactive">
+              <div class="property-card__body">
+                <div class="property-card__info">
+                  <div class="property-card__top">
+                    <h3 class="property-card__title">{{ property.title }}</h3>
+                    <span class="badge badge--inactive">Деактивировано</span>
+                  </div>
+                  <p class="property-card__meta">
+                    <i class="ci-Map_Pin"></i> {{ property.city }}
+                    &nbsp;·&nbsp;
+                    <i class="ci-User_01"></i> до {{ property.max_guests }} гостей
+                    &nbsp;·&nbsp;
+                    <strong>{{ property.price_per_night }} $</strong> / ночь
+                  </p>
+                  <p class="property-card__owner">
+                    <i class="ci-User_Circle"></i> Арендодатель: {{ property.owner }}
+                  </p>
+                </div>
+                <div class="property-card__actions">
+                  <button
+                    class="btn-action btn-action--reactivate"
+                    [disabled]="processingId() === property.id"
+                    (click)="reactivate(property)"
+                  >
+                    <i class="ci-Show"></i> Активировать
+                  </button>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+  }
+
+</div>
+
+@if (pendingAction() !== null && modalConfig) {
+  <app-confirm-modal
+    [title]="modalConfig.title"
+    [text]="modalConfig.text"
+    [icon]="modalConfig.icon"
+    [iconVariant]="modalConfig.iconVariant"
+    [confirmLabel]="modalConfig.confirmLabel"
+    [confirmVariant]="modalConfig.confirmVariant"
+    (confirmed)="confirmAction()"
+    (dismissed)="dismissAction()"
+  />
+}

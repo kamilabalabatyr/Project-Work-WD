@@ -1,0 +1,13 @@
+<div class="modal-overlay" (click)="dismissed.emit()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-icon modal-icon--{{ iconVariant }}">
+      <i [class]="icon"></i>
+    </div>
+    <h2 class="modal-title">{{ title }}</h2>
+    <p class="modal-text">{{ text }}</p>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn--keep" (click)="dismissed.emit()">Отмена</button>
+      <button class="modal-btn modal-btn--{{ confirmVariant }}" (click)="confirmed.emit()">{{ confirmLabel }}</button>
+    </div>
+  </div>
+</div>

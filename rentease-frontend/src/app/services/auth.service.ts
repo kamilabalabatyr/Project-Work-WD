@@ -51,6 +51,10 @@ export class AuthService {
     return this.getRole() === 'landlord';
   }
 
+  isAdmin(): boolean {
+    return this.getRole() === 'admin';
+  }
+
   saveSession(res: LoginResponse): void {
     sessionStorage.setItem('token', res.token);
     sessionStorage.setItem('username', res.username);

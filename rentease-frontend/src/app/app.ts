@@ -28,6 +28,10 @@ export class App {
     return this.authService.isLandlord();
   }
 
+  isAdmin(): boolean {
+    return this.authService.isAdmin();
+  }
+
   getUsername(): string | null {
     return this.authService.getUsername();
   }

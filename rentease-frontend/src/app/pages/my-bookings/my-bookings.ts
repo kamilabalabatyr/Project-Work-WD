@@ -1,6 +1,7 @@
 import { Component, OnInit, signal, computed } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { NgTemplateOutlet } from '@angular/common';
+import { ConfirmModal } from '../../components/confirm-modal/confirm-modal';
 import { forkJoin } from 'rxjs';
 import { BookingService } from '../../services/booking.service';
 import { PropertyService } from '../../services/property.service';
@@ -10,7 +11,7 @@ import { IProperty, getPropertyPhotoUrl } from '../../interfaces/property.interf
 @Component({
   selector: 'app-my-bookings',
   standalone: true,
-  imports: [RouterModule, NgTemplateOutlet],
+  imports: [RouterModule, NgTemplateOutlet, ConfirmModal],
   templateUrl: './my-bookings.html',
   styleUrl: './my-bookings.scss'
 })

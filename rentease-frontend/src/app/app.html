@@ -4,7 +4,10 @@
     <nav>
       <a routerLink="/properties">Все объекты</a>
       @if (isLoggedIn() && !isLandlord()) {
-        <a routerLink="/my-bookings">Мои брони</a>
+        <a routerLink="/my-bookings">Мои бронирования</a>
+      }
+      @if (isLoggedIn() && isAdmin()) {
+        <a routerLink="/admin/applications">Заявки</a>
       }
       @if (isLoggedIn()) {
         <span class="nav-username">

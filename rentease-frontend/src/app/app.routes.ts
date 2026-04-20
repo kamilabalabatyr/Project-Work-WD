@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 import { landlordGuard } from './guards/landlord.guard';
 import { landlordRedirectGuard } from './guards/landlord-redirect.guard';
+import { adminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -38,6 +39,14 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/payment/payment').then(m => m.Payment),
     canActivate: [authGuard]
+  },
+
+  // Admin section
+  {
+    path: 'admin/applications',
+    loadComponent: () =>
+      import('./pages/admin-applications/admin-applications').then(m => m.AdminApplications),
+    canActivate: [adminGuard]
   },
 
   // Extranet — landlord section

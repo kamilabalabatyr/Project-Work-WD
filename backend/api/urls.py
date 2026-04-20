@@ -13,7 +13,11 @@ urlpatterns = [
 
     # Admin — approval workflow (FBV)
     path('admin/properties/pending/', views.pending_properties_view, name='pending-properties'),
+    path('admin/properties/approved/', views.approved_properties_view, name='approved-properties'),
+    path('admin/properties/inactive/', views.inactive_properties_view, name='inactive-properties'),
     path('admin/properties/<int:pk>/approval/', views.property_approval_view, name='property-approval'),
+    path('admin/properties/<int:pk>/deactivate/', views.property_deactivate_view, name='property-deactivate'),
+    path('admin/properties/<int:pk>/reactivate/', views.property_reactivate_view, name='property-reactivate'),
 
     # Landlord extranet (FBV)
     path('landlord/properties/', views.landlord_properties_view, name='landlord-properties'),

@@ -145,6 +145,66 @@ def pending_properties_view(request):
 
 
 # ──────────────────────────────────────────
+# FBV — Admin: list approved properties
+# ──────────────────────────────────────────
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def approved_properties_view(request):
+    approved = Property.objects.filter(status='approved').select_related('owner').order_by('-created_at')
+    serializer = PropertyModelSerializer(approved, many=True)
+    return Response(serializer.data)
+
+
+# ──────────────────────────────────────────
+# FBV — Admin: list inactive properties
+# ──────────────────────────────────────────
+@api_view(['GET'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def inactive_properties_view(request):
+    inactive = Property.objects.filter(status='inactive').select_related('owner').order_by('-created_at')
+    serializer = PropertyModelSerializer(inactive, many=True)
+    return Response(serializer.data)
+
+
+# ──────────────────────────────────────────
+# FBV — Admin: deactivate an approved property
+# ──────────────────────────────────────────
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def property_deactivate_view(request, pk):
+    try:
+        prop = Property.objects.get(pk=pk)
+    except Property.DoesNotExist:
+        return Response({'detail': 'Property not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if prop.status != 'approved':
+        return Response({'detail': 'Only approved properties can be deactivated.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    prop.status = 'inactive'
+    prop.save()
+    return Response(PropertyModelSerializer(prop).data)
+
+
+# ──────────────────────────────────────────
+# FBV — Admin: reactivate an inactive property
+# ──────────────────────────────────────────
+@api_view(['POST'])
+@permission_classes([IsAuthenticated, IsAdmin])
+def property_reactivate_view(request, pk):
+    try:
+        prop = Property.objects.get(pk=pk)
+    except Property.DoesNotExist:
+        return Response({'detail': 'Property not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+    if prop.status != 'inactive':
+        return Response({'detail': 'Only inactive properties can be reactivated.'}, status=status.HTTP_400_BAD_REQUEST)
+
+    prop.status = 'approved'
+    prop.save()
+    return Response(PropertyModelSerializer(prop).data)
+
+
+# ──────────────────────────────────────────
 # FBV — Admin: approve / reject a property
 # ──────────────────────────────────────────
 @api_view(['POST'])
